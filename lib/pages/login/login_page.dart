@@ -1,4 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'forgot_page.dart';
+import 'register_page.dart';
+import '../../api/client.dart' as api;
+
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -28,10 +33,11 @@ class _LoginPageState extends State<LoginPage> {
       child: Image.asset('assets/quote_params.png', fit: BoxFit.none),
     ));
 
+    final usernameController = TextEditingController(text: '');
     final username = TextFormField(
       keyboardType: TextInputType.text,
       autofocus: false,
-      initialValue: '',
+      controller: usernameController,
       decoration: InputDecoration(
         hintText: 'Nazwa użytkownika',
         border: OutlineInputBorder(),
@@ -40,10 +46,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+    final passwordController = TextEditingController(text: '');
     final password = TextFormField(
       autofocus: false,
       obscureText: true,
-      initialValue: '',
+      controller: passwordController,
       decoration: InputDecoration(
         hintText: 'Hasło',
         border: OutlineInputBorder(),
@@ -57,7 +64,23 @@ class _LoginPageState extends State<LoginPage> {
           color: Colors.white70,
           child: Text('Logowanie'),
           padding: EdgeInsets.all(16.0),
-          onPressed: () {}),
+          onPressed: () async {
+            final token = await api.client.getJwtToken(
+              <String, String> {
+                'username': usernameController.text,
+                'password': passwordController.text
+              }
+            );
+
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: token['error'] ? new Text('Error') : new Text(token['token']),
+                );
+              }
+            );
+          }),
     );
 
     final register = Padding(
@@ -68,17 +91,27 @@ class _LoginPageState extends State<LoginPage> {
             textColor: Colors.white,
             child: Text('Utwórz konto'),
             padding: EdgeInsets.all(16.0),
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) => RegisterPage()),
+              );
+            }),
       ),
     );
 
     final forgot = FlatButton(
       child: Text('Zapomniałeś hasła ?'),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (context) => ForgotPasswordPage()),
+        );
+      },
     );
 
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Theme.of(context).primaryColor,
       body: Center(
         child: ListView(
           shrinkWrap: true,
