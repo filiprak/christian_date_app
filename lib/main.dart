@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
+import 'package:christian_date_app/pages/login/login_page.dart';
 
 void main() => runApp(MyApp());
 
