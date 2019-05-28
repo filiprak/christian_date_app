@@ -34,4 +34,4 @@ class ApiClient extends AbstractApiClient {
 
 }
 
-final client = ApiClient();
+final api = ApiClient();

@@ -1,9 +1,11 @@
+import 'package:christian_date_app/state/actions/asyncActions.dart';
+import 'package:christian_date_app/state/appState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'forgot_page.dart';
 import 'register_page.dart';
-import '../../api/client.dart' as api;
-
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -59,29 +61,23 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final submit = Material(
-      child: MaterialButton(
-          color: Colors.white70,
-          child: Text('Logowanie'),
-          padding: EdgeInsets.all(16.0),
-          onPressed: () async {
-            final token = await api.client.getJwtToken(
-              <String, String> {
-                'username': usernameController.text,
-                'password': passwordController.text
-              }
-            );
+    final submit = StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return Material(
+            child: MaterialButton(
 
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  content: token['error'] ? new Text('Error') : new Text(token['token']),
-                );
-              }
-            );
-          }),
-    );
+                color: store.state.loading ? Colors.blue : Colors.white70,
+                child: Text('Logowanie'),
+                padding: EdgeInsets.all(16.0),
+                onPressed: store.state.loading ? null : () {
+                  store.dispatch(LoginWithPasswordAction({
+                    'username': usernameController.text,
+                    'password': passwordController.text,
+                  }).loginWithPassword());
+                }),
+          );
+        });
 
     final register = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
