@@ -15,6 +15,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final usernameController = TextEditingController(text: '');
+  final passwordController = TextEditingController(text: '');
+
+  final _loginForm = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final logo = SizedBox(
@@ -23,19 +29,6 @@ class _LoginPageState extends State<LoginPage> {
       child: Image.asset('assets/logo_center.png', fit: BoxFit.cover),
     ));
 
-    final quote = SizedBox(
-        child: Padding(
-      padding: EdgeInsets.only(left: 8.0, right: 8.0),
-      child: Image.asset('assets/quote.png', fit: BoxFit.cover),
-    ));
-
-    final quoteParams = SizedBox(
-        child: Padding(
-      padding: EdgeInsets.only(left: 8.0, right: 8.0),
-      child: Image.asset('assets/quote_params.png', fit: BoxFit.none),
-    ));
-
-    final usernameController = TextEditingController(text: '');
     final username = TextFormField(
       keyboardType: TextInputType.text,
       autofocus: false,
@@ -46,9 +39,13 @@ class _LoginPageState extends State<LoginPage> {
         fillColor: Colors.white,
         filled: true,
       ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Wpisz nazwę użytkownika';
+        }
+      },
     );
 
-    final passwordController = TextEditingController(text: '');
     final password = TextFormField(
       autofocus: false,
       obscureText: true,
@@ -59,6 +56,11 @@ class _LoginPageState extends State<LoginPage> {
         fillColor: Colors.white,
         filled: true,
       ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Wpisz hasło';
+        }
+      },
     );
 
     final submit = StoreConnector<AppState, Store<AppState>>(
@@ -66,15 +68,16 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context, store) {
           return Material(
             child: MaterialButton(
-
                 color: store.state.loading ? Colors.blue : Colors.white70,
                 child: Text('Logowanie'),
                 padding: EdgeInsets.all(16.0),
                 onPressed: store.state.loading ? null : () {
-                  store.dispatch(LoginWithPasswordAction({
+                  if (_loginForm.currentState.validate()) {
+                    store.dispatch(LoginWithPasswordAction({
                     'username': usernameController.text,
                     'password': passwordController.text,
-                  }).loginWithPassword());
+                    }).loginWithPassword());
+                  }
                 }),
           );
         });
@@ -115,11 +118,19 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             logo,
             SizedBox(height: 48.0),
-            username,
-            SizedBox(height: 8.0),
-            password,
-            SizedBox(height: 24.0),
-            submit,
+            Form(
+              key: _loginForm,
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  username,
+                  SizedBox(height: 8.0),
+                  password,
+                  SizedBox(height: 24.0),
+                  submit,
+                ],
+              ),
+            ),
             forgot,
             SizedBox(height: 24.0),
             register,
