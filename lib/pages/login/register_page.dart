@@ -1,5 +1,8 @@
+import 'package:christian_date_app/state/actions/actions.dart';
+import 'package:christian_date_app/state/appState.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
 class RegisterPage extends StatefulWidget {
   static String tag = 'register-page';
@@ -13,10 +16,9 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final logo = SizedBox(
         child: Padding(
-          padding: EdgeInsets.only(left: 48.0, right: 48.0),
-          child: Image.asset('assets/logo_center.png', fit: BoxFit.cover),
-        )
-    );
+      padding: EdgeInsets.only(left: 48.0, right: 48.0),
+      child: Image.asset('assets/logo_center.png', fit: BoxFit.cover),
+    ));
 
     final fullname = TextFormField(
       keyboardType: TextInputType.text,
@@ -86,16 +88,27 @@ class _RegisterPageState extends State<RegisterPage> {
           onPressed: () {}),
     );
 
-    final back = FlatButton(
-      child: Text('Wróć do logowania'),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
+    final back = StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return FlatButton(
+            textColor: Colors.white70,
+            child: Text('Wróć do logowania'),
+            onPressed: () {
+              store.dispatch(NavigatePopAction());
+            },
+          );
+        });
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      body: Center(
+      body: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/background.jpg'),
+          fit: BoxFit.fitHeight
+        )
+      ),
+      child: Center(
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.only(left: 24.0, right: 24.0),
@@ -118,6 +131,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

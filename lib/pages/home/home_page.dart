@@ -3,6 +3,7 @@ import 'package:christian_date_app/pages/home/search_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'menu.dart';
 import 'messages_page.dart';
 import 'news_page.dart';
 
@@ -62,12 +63,7 @@ class _HomePageState extends State<HomePage> {
         title: _currentTitle,
       ),
       drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            Text('item1'),
-            Text('item2'),
-          ],
-        )
+        child: Menu()
       ),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

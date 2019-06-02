@@ -12,3 +12,17 @@ class SetLoadingAction {
 
   SetLoadingAction(this.loading);
 }
+
+class NavigatePushPageAction {
+  final dynamic page;
+
+  NavigatePushPageAction(this.page);
+}
+
+class NavigateReplacePageAction {
+  final dynamic page;
+
+  NavigateReplacePageAction(this.page);
+}
+
+class NavigatePopAction {}
