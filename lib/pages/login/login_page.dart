@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     store.dispatch(LoginWithPasswordAction({
                     'username': usernameController.text,
                     'password': passwordController.text,
-                    }).loginWithPassword(context));
+                    }).thunk(context));
                   }
                 }),
           );

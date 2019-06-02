@@ -10,13 +10,23 @@ class Menu extends StatelessWidget {
     return StoreConnector<AppState, Store<AppState>>(
         converter: (store) => store,
         builder: (context, store) {
-          return ListView(
-            children: <Widget>[
+
+          var content = <Widget>[];
+
+          if (store.state.loggedUser != null) {
+            content = <Widget>[
               new UserAccountsDrawerHeader(
-                accountName: new Text('Raja'),
-                accountEmail: new Text('testemail@test.com'),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/background.jpg'),
+                    fit: BoxFit.fitHeight
+                  )
+                ),
+                accountName: new Text(store.state.loggedUser.name),
+                accountEmail: new Text(store.state.loginModel.email),
                 currentAccountPicture: new CircleAvatar(
-                  backgroundImage: new NetworkImage('http://i.pravatar.cc/300'),
+                  backgroundImage: new NetworkImage(store.state.loggedUser.avatar.containsKey('48') ?
+                  store.state.loggedUser.avatar['48'] : ''),
                 ),
               ),
               new ListTile(
@@ -26,7 +36,11 @@ class Menu extends StatelessWidget {
                   store.dispatch(LogoutAction().logout());
                 },
               ),
-            ],
+            ];
+          }
+
+          return ListView(
+            children: content
           );
         }
       );

@@ -1,10 +1,17 @@
 import 'package:christian_date_app/state/models/loginModel.dart';
+import 'package:christian_date_app/state/models/userModel.dart';
 
 
 class UpdateLoginModelAction {
   final LoginModel newModel;
 
   UpdateLoginModelAction(this.newModel);
+}
+
+class UpdateCurrentUserModelAction {
+  final UserModel newModel;
+
+  UpdateCurrentUserModelAction(this.newModel);
 }
 
 class SetLoadingAction {

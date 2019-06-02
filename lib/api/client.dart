@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 class ApiClient extends AbstractApiClient {
   final String baseUrl = 'http://www.test-chrzescijanskarandka.tk/wp-json';
+  String token = '';
 
   @override
   Future<Map<String, dynamic>> getJwtToken(Map<String, String> credentials) async {
@@ -16,6 +17,8 @@ class ApiClient extends AbstractApiClient {
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
+
+      token = decoded['token'];
 
       return <String, dynamic> {
         'error': false,
@@ -30,6 +33,38 @@ class ApiClient extends AbstractApiClient {
         'response': response.body,
       };
     }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getCurrentUserData() async {
+
+    final response = await http.get(
+      baseUrl + '/wp/v2/users/me',
+      headers: {
+        'Authorization': 'Bearer $token'
+      }
+    );
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      token = decoded['token'];
+
+      return <String, dynamic> {
+        'error': false,
+        'name': decoded['name'],
+        'username': decoded['slug'],
+        'description': decoded['description'],
+        'link': decoded['link'],
+        'avatar': decoded['avatar_urls'],
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+
   }
 
 }

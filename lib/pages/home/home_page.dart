@@ -1,5 +1,7 @@
 import 'package:christian_date_app/pages/home/profile_page.dart';
 import 'package:christian_date_app/pages/home/search_page.dart';
+import 'package:christian_date_app/state/actions/asyncActions.dart';
+import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +18,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    store.dispatch(FetchCurrentUserDataAction().thunk(context));
+  }
 
   static int _currentIndex = 0;
 

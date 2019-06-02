@@ -6,6 +6,10 @@ AppState appReducer(AppState state, action) {
     state.loginModel = action.newModel;
     return state;
 
+  } else if (action is UpdateCurrentUserModelAction) {
+    state.loggedUser = action.newModel;
+    return state;
+
   } else if (action is SetLoadingAction) {
     state.loading = action.loading;
     return state;
