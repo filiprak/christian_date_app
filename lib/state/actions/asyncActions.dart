@@ -19,7 +19,7 @@ class LoginWithPasswordAction {
   ThunkAction<AppState> thunk(BuildContext context) {
     return (Store<AppState> store) async {
       try {
-        store.dispatch(SetLoadingAction(true));
+        store.dispatch(SetLoadingAction(true, 'login'));
         store.dispatch(ShowModalDialogAction().thunk(Dialogs.loading(context)));
         final response = await api.getJwtToken(credentials);
 
@@ -60,7 +60,7 @@ class LoginWithPasswordAction {
                   'Ups... Coś poszło nie tak, sprawdź połączenie z internetem.'
             })));
       } finally {
-        store.dispatch(SetLoadingAction(false));
+        store.dispatch(SetLoadingAction(false, 'login'));
       }
     };
   }
@@ -69,12 +69,7 @@ class LoginWithPasswordAction {
 class LogoutAction {
   ThunkAction<AppState> logout() {
     return (Store<AppState> store) {
-      store.dispatch(UpdateLoginModelAction(LoginModel(
-        null,
-        null,
-        null,
-        false,
-      )));
+      store.dispatch(ResetStateAction());
       store.dispatch(NavigateReplacePageAction(LoginPage()));
     };
   }
@@ -91,21 +86,49 @@ class ShowModalDialogAction {
 class FetchCurrentUserDataAction {
   ThunkAction<AppState> thunk(BuildContext context) {
     return (Store<AppState> store) async {
-      //try {
+      try {
         final response = await api.getCurrentUserData();
 
         if (!response['error']) {
           UserModel userModel = UserModel.fromJson(response);
           store.dispatch(UpdateCurrentUserModelAction(userModel));
         }
-//
-//      } catch (_) {
-//        store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context,
-//            params: {
-//              'content':
-//              'Ups... Coś poszło nie tak, sprawdź połączenie z internetem.'
-//            })));
-//      }
+
+      } catch (error) {
+        print('Error in FetchCurrentUserDataAction: ');
+        print(error);
+      }
+    };
+  }
+}
+
+class FetchActivitiesChunkAction {
+  final int page;
+  final int perPage;
+  final String type;
+
+  FetchActivitiesChunkAction(this.page, this.perPage, this.type);
+
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        store.dispatch(SetLoadingAction(true, 'news'));
+        final response = await api.getActivities({
+          'per_page': perPage.toString(),
+          'page': page.toString(),
+          'with_avatar': 'true',
+        });
+
+        if (!response['error']) {
+          store.dispatch(UpdateActivitiesAction(type, response['activities']));
+        }
+
+      } catch (error) {
+        print('Error in FetchActivitiesChunkAction: ');
+        print(error);
+      } finally {
+        store.dispatch(SetLoadingAction(false, 'news'));
+      }
     };
   }
 }

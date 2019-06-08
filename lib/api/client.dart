@@ -1,17 +1,19 @@
 import 'dart:convert';
 
+import 'package:christian_date_app/state/models/activityModel.dart';
+
 import 'abstractClient.dart';
 import 'package:http/http.dart' as http;
 
 class ApiClient extends AbstractApiClient {
-  final String baseUrl = 'http://www.test-chrzescijanskarandka.tk/wp-json';
+  final String baseUrl = 'www.test-chrzescijanskarandka.tk';
   String token = '';
 
   @override
   Future<Map<String, dynamic>> getJwtToken(Map<String, String> credentials) async {
 
     final response = await http.post(
-      baseUrl + '/jwt-auth/v1/token',
+      Uri.http(baseUrl, '/wp-json/jwt-auth/v1/token'),
       body: credentials,
     );
 
@@ -39,7 +41,7 @@ class ApiClient extends AbstractApiClient {
   Future<Map<String, dynamic>> getCurrentUserData() async {
 
     final response = await http.get(
-      baseUrl + '/wp/v2/users/me',
+      Uri.http(baseUrl, '/wp-json/wp/v2/users/me'),
       headers: {
         'Authorization': 'Bearer $token'
       }
@@ -47,8 +49,6 @@ class ApiClient extends AbstractApiClient {
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
-
-      token = decoded['token'];
 
       return <String, dynamic> {
         'error': false,
@@ -65,6 +65,32 @@ class ApiClient extends AbstractApiClient {
       };
     }
 
+  }
+
+  @override
+  Future<Map<String, dynamic>> getActivities(Map<String, String> query) async {
+    final response = await http.get(
+        Uri.http(baseUrl, '/wp-json/mobile/v1/activities', query),
+        headers: {
+          'Authorization': 'Bearer $token'
+        },
+    );
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      List<dynamic> activities = decoded['items'] as List;
+
+      return <String, dynamic> {
+        'error': false,
+        'activities': activities.map((activity) => ActivityModel.fromJson(activity)).toList(),
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
   }
 
 }

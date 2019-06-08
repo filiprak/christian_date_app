@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     store.dispatch(FetchCurrentUserDataAction().thunk(context));
+    store.dispatch(FetchActivitiesChunkAction(1, store.state.activitiesPerLoad, 'replace').thunk(context));
   }
 
   static int _currentIndex = 0;

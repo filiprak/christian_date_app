@@ -1,14 +1,13 @@
+import 'package:christian_date_app/state/actions/asyncActions.dart';
+import 'package:christian_date_app/state/appState.dart';
+import 'package:christian_date_app/state/models/activityModel.dart';
+import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-class ChatModel {
-  final String avatarUrl;
-  final String name;
-  final String datetime;
-  final String message;
-
-  ChatModel({this.avatarUrl, this.name, this.datetime, this.message});
-}
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:redux/redux.dart';
 
 class NewsPage extends StatefulWidget {
   static String tag = 'news-page';
@@ -18,84 +17,118 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
-  static final List<ChatModel> dummyData = [
-    ChatModel(
-      avatarUrl: "https://randomuser.me/api/portraits/women/34.jpg",
-      name: "Laurent",
-      datetime: "20:18",
-      message: "How about meeting tomorrow?",
-    ),
-    ChatModel(
-      avatarUrl: "https://randomuser.me/api/portraits/women/49.jpg",
-      name: "Tracy",
-      datetime: "19:22",
-      message: "I love that idea, it's great!",
-    ),
-    ChatModel(
-      avatarUrl: "https://randomuser.me/api/portraits/women/77.jpg",
-      name: "Claire",
-      datetime: "14:34",
-      message: "I wasn't aware of that. Let me check",
-    ),
-    ChatModel(
-      avatarUrl: "https://randomuser.me/api/portraits/men/81.jpg",
-      name: "Joe",
-      datetime: "11:05",
-      message: "Flutter just release 1.0 officially. Should I go for it?",
-    ),
-    ChatModel(
-      avatarUrl: "https://randomuser.me/api/portraits/men/83.jpg",
-      name: "Mark",
-      datetime: "09:46",
-      message: "It totally makes sense to get some extra day-off.",
-    ),
-    ChatModel(
-      avatarUrl: "https://randomuser.me/api/portraits/men/85.jpg",
-      name: "Williams",
-      datetime: "08:15",
-      message: "It has been re-scheduled to next Saturday 7.30pm",
-    ),
-  ];
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels > _scrollController.position.maxScrollExtent - 30) {
+        if (!store.state.loadingActivities) {
+          int page = store.state.activities.length ~/ store.state.activitiesPerLoad + 1;
+          store.dispatch(FetchActivitiesChunkAction(page, store.state.activitiesPerLoad, 'append').thunk(context));
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: 2,
-        itemBuilder: (context, index) {
+    return StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return Scaffold(
+            body: RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: () {
+                return Future<Null>(() {
+                  store.dispatch(FetchActivitiesChunkAction(1, store.state.activitiesPerLoad, 'replace').thunk(context));
+                });
+              },
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: store.state.loadingActivities
+                    ? store.state.activities.length + 1
+                    : store.state.activities.length,
+                itemBuilder: (context, index) {
+                  if (index < store.state.activities.length) {
+                    ActivityModel _model = store.state.activities[index];
 
-          ChatModel _model = dummyData[index];
-
-          return Column(
-            children: <Widget>[
-              Divider(
-                height: 12.0,
+                    return Column(
+                      children: <Widget>[
+                        Divider(
+                          height: 12.0,
+                        ),
+                        ListTile(
+                          leading: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: _model.avatar != null
+                                ? NetworkImage(_model.avatar)
+                                : null,
+                          ),
+                          title: Row(
+                            children: <Widget>[
+                              Flexible(
+                                child: Html(
+                                  data: _model.action,
+                                  defaultTextStyle: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(top: _model.content.length > 0 ? 8.0 : 0.0),
+                                child: Html(
+                                  data: _model.content,
+                                  defaultTextStyle: TextStyle(
+                                    color: Theme.of(context).textTheme.body1.color,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 8.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      timeago.format(_model.date),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              )
+                            ],
+                          )
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Center(
+                      child: Padding(
+                          child: CircularProgressIndicator(),
+                          padding: EdgeInsets.all(24.0)),
+                    );
+                  }
+                },
               ),
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(_model.avatarUrl),
-                ),
-                title: Row(
-                  children: <Widget>[
-                    Text(_model.name),
-                    SizedBox(
-                      width: 16.0,
-                    ),
-                    Text(
-                      _model.datetime,
-                    ),
-                  ],
-                ),
-                subtitle: Text(_model.message),
-                trailing: Icon(
-                  Icons.chevron_right,
-                ),
-              ),
-            ],
+            ),
           );
-        },
-      ),
-    );
+        });
   }
 }

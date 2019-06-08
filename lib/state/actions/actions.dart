@@ -1,3 +1,4 @@
+import 'package:christian_date_app/state/models/activityModel.dart';
 import 'package:christian_date_app/state/models/loginModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 
@@ -14,10 +15,18 @@ class UpdateCurrentUserModelAction {
   UpdateCurrentUserModelAction(this.newModel);
 }
 
+class UpdateActivitiesAction {
+  final String type;
+  final List<ActivityModel> activities;
+
+  UpdateActivitiesAction(this.type, this.activities);
+}
+
 class SetLoadingAction {
+  final String what;
   final bool loading;
 
-  SetLoadingAction(this.loading);
+  SetLoadingAction(this.loading, this.what);
 }
 
 class NavigatePushPageAction {
@@ -33,3 +42,5 @@ class NavigateReplacePageAction {
 }
 
 class NavigatePopAction {}
+
+class ResetStateAction {}
