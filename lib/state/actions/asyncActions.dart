@@ -132,3 +132,38 @@ class FetchActivitiesChunkAction {
     };
   }
 }
+
+class PublishNewPostAction {
+  final String content;
+
+  PublishNewPostAction(this.content);
+
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        store.dispatch(ShowModalDialogAction().thunk(Dialogs.loading(context)));
+        final response = await api.createActivity(content);
+        store.dispatch(NavigatePopAction());
+
+        if (!response['error']) {
+          store.dispatch(FetchActivitiesChunkAction(1, store.state.activitiesPerLoad, 'replace').thunk(context));
+        } else {
+          store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context,
+            params: {
+              'content': 'Ups... Coś poszło nie tak, nie udało się opublikować postu.'
+            })));
+        }
+
+      } catch (error) {
+        store.dispatch(NavigatePopAction());
+        print('Error in PublishNewPostAction: ');
+        print(error);
+
+        store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context,
+            params: {
+              'content': 'Ups... Coś poszło nie tak, sprawdź połączenie z internetem.'
+            })));
+      }
+    };
+  }
+}

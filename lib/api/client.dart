@@ -93,6 +93,35 @@ class ApiClient extends AbstractApiClient {
     }
   }
 
+  @override
+  Future<Map<String, dynamic>> createActivity(String content) async {
+    final response = await http.post(
+      Uri.http(baseUrl, '/wp-json/mobile/v1/activities'),
+      body: {
+        'content': content
+      },
+      headers: {
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'activity': decoded,
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
 }
 
 final api = ApiClient();

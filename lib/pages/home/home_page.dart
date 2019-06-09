@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'menu.dart';
 import 'messages_page.dart';
-import 'news_page.dart';
+import 'package:christian_date_app/pages/home/news/news_page.dart';
 
 
 class HomePage extends StatefulWidget {

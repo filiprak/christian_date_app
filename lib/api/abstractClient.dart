@@ -5,4 +5,6 @@ abstract class AbstractApiClient {
 
   Future<Map<String, dynamic>> getActivities(Map<String, String> query);
 
+  Future<Map<String, dynamic>> createActivity(String content);
+
 }
