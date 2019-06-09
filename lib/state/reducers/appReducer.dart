@@ -17,6 +17,16 @@ AppState appReducer(AppState state, action) {
       state.activities.insertAll(0, action.activities);
     }
 
+  } else if (action is UpdateMessageThreadsAction) {
+    if (action.type == 'replace') {
+      state.messageThreads = action.threads;
+    } else if (action.type == 'append') {
+      state.messageThreads.addAll(action.threads);
+    } else if (action.type == 'prepend') {
+      state.messageThreads.insertAll(0, action.threads);
+    }
+    state.allThreadsLoaded = action.allLoaded;
+
   } else if (action is SetLoadingAction) {
     if (action.what == 'login') {
       state.loading = action.loading;
@@ -24,6 +34,8 @@ AppState appReducer(AppState state, action) {
       state.loadingActivities = action.loading;
     } else if (action.what == 'messages') {
       state.loadingActivities = action.loading;
+    } else if (action.what == 'threads') {
+      state.loadingThreads = action.loading;
     } //...
 
 } else if (action is ResetStateAction) {

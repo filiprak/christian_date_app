@@ -18,8 +18,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  final usernameController = TextEditingController(text: 'filiprak');
-  final passwordController = TextEditingController(text: 'ZptjW4cSc37nz6H');
+//  final usernameController = TextEditingController(text: 'filiprak');
+//  final passwordController = TextEditingController(text: 'ZptjW4cSc37nz6H');
+  final usernameController = TextEditingController(text: 'Chrzescijanska Randka');
+  final passwordController = TextEditingController(text: 'lTV*(TNECbs7K0D4NZX#!8ng');
 
   final _loginForm = GlobalKey<FormState>();
 

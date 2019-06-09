@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
-class MessagesPage extends StatefulWidget {
+class MessagesThreadPage extends StatefulWidget {
   static String tag = 'messages-page';
 
   @override
-  _MessagesPageState createState() => _MessagesPageState();
+  _MessagesThreadPageState createState() => _MessagesThreadPageState();
 }
 
-class _MessagesPageState extends State<MessagesPage> {
+class _MessagesThreadPageState extends State<MessagesThreadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

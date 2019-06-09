@@ -1,5 +1,6 @@
 import 'package:christian_date_app/state/models/activityModel.dart';
 import 'package:christian_date_app/state/models/loginModel.dart';
+import 'package:christian_date_app/state/models/threadModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 
 
@@ -20,6 +21,14 @@ class UpdateActivitiesAction {
   final List<ActivityModel> activities;
 
   UpdateActivitiesAction(this.type, this.activities);
+}
+
+class UpdateMessageThreadsAction {
+  final String type;
+  final List<ThreadModel> threads;
+  final bool allLoaded;
+
+  UpdateMessageThreadsAction(this.type, this.threads, { this.allLoaded = false });
 }
 
 class SetLoadingAction {

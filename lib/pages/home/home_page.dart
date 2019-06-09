@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'menu.dart';
-import 'messages_page.dart';
+import 'package:christian_date_app/pages/home/messages/messages_page.dart';
 import 'package:christian_date_app/pages/home/news/news_page.dart';
 
 

@@ -167,3 +167,33 @@ class PublishNewPostAction {
     };
   }
 }
+
+class FetchMessageThreadsChunkAction {
+  final int page;
+  final int perPage;
+  final String type;
+
+  FetchMessageThreadsChunkAction(this.page, this.perPage, this.type);
+
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        store.dispatch(SetLoadingAction(true, 'threads'));
+        final response = await api.getMessageThreads({
+          'per_page': perPage.toString(),
+          'page': page.toString(),
+        });
+
+        if (!response['error']) {
+          store.dispatch(UpdateMessageThreadsAction(type, response['threads'], allLoaded: response['count'] == 0));
+        }
+
+      } catch (error) {
+        print('Error in FetchMessageThreadsChunkAction: ');
+        print(error);
+      } finally {
+        store.dispatch(SetLoadingAction(false, 'threads'));
+      }
+    };
+  }
+}

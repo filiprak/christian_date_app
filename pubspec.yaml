@@ -28,6 +28,7 @@ dependencies:
   flutter_redux: ^0.5.3
   flutter_html: ^0.8.2
   timeago: ^2.0.16
+  badges: ^1.0.3
 
 
 dev_dependencies:
