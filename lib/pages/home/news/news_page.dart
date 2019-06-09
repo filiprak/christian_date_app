@@ -118,8 +118,8 @@ class _NewsPageState extends State<NewsPage> {
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 4.0, horizontal: 12.0),
                           onTap: () {
-                            /*store.dispatch(
-                                NavigatePushPageAction(NewsSinglePage()));*/
+                            store.dispatch(
+                                NavigatePushPageAction(NewsSinglePage(_model.id)));
                           },
                           leading: CircleAvatar(
                             radius: 25,

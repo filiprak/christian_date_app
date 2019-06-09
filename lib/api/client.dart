@@ -105,8 +105,6 @@ class ApiClient extends AbstractApiClient {
       },
     );
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
