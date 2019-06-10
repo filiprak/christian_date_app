@@ -1,3 +1,4 @@
+import 'messagesState.dart';
 import 'models/activityModel.dart';
 import 'models/loginModel.dart';
 import 'models/threadModel.dart';
@@ -16,8 +17,9 @@ class AppState {
   // messages
   List<ThreadModel> messageThreads;
   bool loadingThreads = false;
-  int threadsPerLoad = 10;
+  int threadsPerLoad = 15;
   bool allThreadsLoaded = false;
+  MessagesState messagesState;
 
   bool loading = false;
 
@@ -35,6 +37,7 @@ class AppState {
     this.loadingThreads = false;
     this.threadsPerLoad = 10;
     this.allThreadsLoaded = false;
+    this.messagesState = MessagesState.initial();
 
     this.loading = false;
   }

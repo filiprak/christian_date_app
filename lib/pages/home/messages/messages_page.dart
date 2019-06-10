@@ -1,3 +1,4 @@
+import 'package:christian_date_app/state/actions/actions.dart';
 import 'package:christian_date_app/state/appState.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
 import 'package:christian_date_app/state/store.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:badges/badges.dart';
 import 'package:redux/redux.dart';
+
+import 'messages_thread_page.dart';
 
 
 class MessagesPage extends StatefulWidget {
@@ -29,16 +32,15 @@ class _MessagesPageState extends State<MessagesPage> {
     super.initState();
 
     if (store.state.messageThreads.isEmpty) {
-      store.dispatch(FetchMessageThreadsChunkAction(1, store.state.threadsPerLoad, 'replace').thunk(context));
+      store.dispatch(FetchMessageThreadsChunkAction(0, store.state.threadsPerLoad, 'replace').thunk(context));
     }
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >
           _scrollController.position.maxScrollExtent - 30) {
         if (!store.state.loadingThreads && !store.state.allThreadsLoaded) {
-          int page = store.state.messageThreads.length ~/ store.state.threadsPerLoad + 1;
           store.dispatch(FetchMessageThreadsChunkAction(
-              page, store.state.threadsPerLoad, 'append')
+              store.state.messageThreads.length, store.state.threadsPerLoad, 'append')
               .thunk(context));
         }
       }
@@ -82,11 +84,10 @@ class _MessagesPageState extends State<MessagesPage> {
                     child: RefreshIndicator(
                       key: _refreshIndicatorKey,
                       onRefresh: () {
-                        return Future<Null>(() {
                           store.dispatch(FetchMessageThreadsChunkAction(
-                              1, store.state.threadsPerLoad, 'replace')
+                              0, store.state.threadsPerLoad, 'replace')
                               .thunk(context));
-                        });
+                          return Future.delayed(const Duration(seconds: 1));
                       },
                       child: ListView.separated(
                         separatorBuilder: (context, index) => Divider(
@@ -104,8 +105,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 12.0),
                               onTap: () {
-                                /*store.dispatch(
-                                    NavigatePushPageAction(NewsSinglePage(_model.id)));*/
+                                store.dispatch(NavigatePushPageAction(MessagesThreadPage(_model)));
                               },
                               leading: CircleAvatar(
                                 radius: 25,
@@ -143,7 +143,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                     child: Row(
                                       children: <Widget>[
                                         Flexible(
-                                            child: Text(_model.lastMessage.message,
+                                            child: Text((_model.lastMessage.self ? 'Ty: ' : '') + _model.lastMessage.message,
                                                 overflow: TextOverflow.ellipsis
                                             )
                                         ),

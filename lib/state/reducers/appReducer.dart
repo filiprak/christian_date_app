@@ -1,5 +1,7 @@
 import '../appState.dart';
 import '../actions/actions.dart';
+import 'messageReducer.dart';
+
 
 AppState appReducer(AppState state, action) {
   if (action is UpdateLoginModelAction) {
@@ -38,8 +40,10 @@ AppState appReducer(AppState state, action) {
       state.loadingThreads = action.loading;
     } //...
 
-} else if (action is ResetStateAction) {
+  } else if (action is ResetStateAction) {
     state = AppState.initial();
+  } else {
+    state.messagesState = messageReducer(state.messagesState, action);
   }
 
   return state;

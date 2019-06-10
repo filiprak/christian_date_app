@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:christian_date_app/state/models/activityModel.dart';
+import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
 
 import 'abstractClient.dart';
@@ -17,6 +18,8 @@ class ApiClient extends AbstractApiClient {
       Uri.http(baseUrl, '/wp-json/jwt-auth/v1/token'),
       body: credentials,
     );
+
+    print(response.body);
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
@@ -48,6 +51,8 @@ class ApiClient extends AbstractApiClient {
       }
     );
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
@@ -77,6 +82,8 @@ class ApiClient extends AbstractApiClient {
         },
     );
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
@@ -105,6 +112,8 @@ class ApiClient extends AbstractApiClient {
         'Authorization': 'Bearer $token'
       },
     );
+
+    print(response.body);
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
@@ -140,7 +149,42 @@ class ApiClient extends AbstractApiClient {
       return <String, dynamic> {
         'error': false,
         'count': decoded['count'],
+        'limit': decoded['limit'],
+        'offset': decoded['offset'],
+        'total': decoded['total'],
         'threads': threads.map((thread) => ThreadModel.fromJson(thread)).toList(),
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getMessages(Map<String, String> query) async {
+    final response = await http.get(
+      Uri.http(baseUrl, '/wp-json/mobile/v1/messages', query),
+      headers: {
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      List<dynamic> messages = decoded['items'] as List;
+
+      return <String, dynamic> {
+        'error': false,
+        'count': decoded['count'],
+        'limit': decoded['limit'],
+        'offset': decoded['offset'],
+        'total': decoded['total'],
+        'messages': messages.map((message) => PrivateMessageModel.fromJson(message)).toList(),
       };
     } else {
       return <String, dynamic> {

@@ -19,14 +19,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  @override
-  void initState() {
-    super.initState();
-    store.dispatch(FetchCurrentUserDataAction().thunk(context));
-    store.dispatch(FetchActivitiesChunkAction(1, store.state.activitiesPerLoad, 'replace').thunk(context));
-  }
-
-  static int _currentIndex = 0;
+  int _currentIndex = 0;
+  Text _currentTitle;
 
   final List<Widget> _children = [
     NewsPage(),
@@ -54,8 +48,14 @@ class _HomePageState extends State<HomePage> {
     )
   ];
 
-  Text _currentTitle = _bottomNavigation[_currentIndex].title;
-
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = 0;
+    _currentTitle = _bottomNavigation[_currentIndex].title;
+    store.dispatch(FetchCurrentUserDataAction().thunk(context));
+    store.dispatch(FetchActivitiesChunkAction(1, store.state.activitiesPerLoad, 'replace').thunk(context));
+  }
 
   @override
   Widget build(BuildContext context) {

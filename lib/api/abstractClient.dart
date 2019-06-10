@@ -13,4 +13,6 @@ abstract class AbstractApiClient {
 
   Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query);
 
+  Future<Map<String, dynamic>> getMessages(Map<String, String> query);
+
 }
