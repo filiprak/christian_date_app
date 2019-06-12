@@ -10,6 +10,7 @@ class MessagesState {
   int messagesPerLoad = 10;
 
   bool currentThreadLoading = false;
+  bool sendingMessage = false;
 
   MessagesState() {
     this.privateMessages = Map<int, List<PrivateMessageModel>>();
@@ -18,6 +19,7 @@ class MessagesState {
     this.messagesPerLoad = 10;
 
     this.currentThreadLoading = false;
+    this.sendingMessage = false;
   }
 
   bool hasMessages(threadId) {

@@ -24,8 +24,8 @@ class AppState {
   bool loading = false;
 
   AppState() {
-    this.loginModel = LoginModel(null, null, null, false);
-    this.loggedUser = null;
+    this.loginModel = LoginModel(null, null, false);
+    this.loggedUser = UserModel();
 
     // activities
     this.activities = List<ActivityModel>();

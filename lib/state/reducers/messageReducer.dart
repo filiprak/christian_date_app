@@ -20,6 +20,8 @@ MessagesState messageReducer(MessagesState state, action) {
     }
 
     state.allMessagesLoaded[action.threadId] = action.allLoaded;
+  } else if (action is SetSendingMessageAction) {
+    state.sendingMessage = action.sending;
   }
 
   return state;

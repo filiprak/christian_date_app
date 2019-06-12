@@ -2,7 +2,9 @@ import 'package:christian_date_app/components/dialogs.dart';
 import 'package:christian_date_app/state/actions/actions.dart';
 import 'package:christian_date_app/state/actions/asyncActions.dart';
 import 'package:christian_date_app/state/actions/asyncMessageActions.dart';
+import 'package:christian_date_app/state/actions/messageActions.dart';
 import 'package:christian_date_app/state/appState.dart';
+import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
 import 'package:christian_date_app/state/store.dart';
@@ -30,17 +32,18 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
 
   final Map<int, bool> _showTitle = Map<int, bool>();
 
+  final _sendTextController = TextEditingController(text: '');
   ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    if (!store.state.messagesState.hasMessages(thread.id)) {
-      store.dispatch(FetchCurrentThreadMessagesChunkAction(0,
-          store.state.messagesState.messagesPerLoad,
-          thread.id,
-          'replace').thunk(context));
-    }
+
+    store.dispatch(FetchCurrentThreadMessagesChunkAction(0,
+        store.state.messagesState.messagesPerLoad,
+        thread.id,
+        'replace').thunk(context));
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels > _scrollController.position.maxScrollExtent - 5) {
         print(_scrollController.position.pixels);
@@ -120,16 +123,18 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                             _showTitle.containsKey(_model.id) && _showTitle[_model.id] ? Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text('Tytuł: ', style: TextStyle(
-                                  fontWeight: FontWeight.bold
-                                )),
-                                Text(_model.subject),
+                                Flexible(
+                                  child: Text(_model.subject,
+                                    maxLines: 5,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
                               ],
                             ) : Row(),
                             Padding(
                               padding: EdgeInsets.only(top: 4.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: _model.self ? MainAxisAlignment.end : MainAxisAlignment.start,
                                 children: <Widget>[
                                   Flexible(
                                     child: Container(
@@ -140,7 +145,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                                       padding: EdgeInsets.all(16.0),
                                       child: Text(_model.message, style: TextStyle(
                                         fontSize: 16,
-                                        color: _model.self ? Colors.white70 : Theme.of(context).textTheme.body1.color
+                                        color: _model.self ? Colors.white : Theme.of(context).textTheme.body1.color
                                       )),
                                     ),
                                     fit: FlexFit.loose,
@@ -151,7 +156,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 8.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: _model.self ? MainAxisAlignment.end : MainAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
                                     timeago.format(_model.date),
@@ -174,20 +179,58 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextField(
+                        controller: _sendTextController,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 5,
+                        maxLength: 2048,
+                        autofocus: false,
                         decoration: InputDecoration(
-                            hintText: 'Napisz coś',
-                            contentPadding: EdgeInsets.all(12.0),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0)
-                            )
+                          counterText: '',
+                          hintText: 'Napisz coś',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24.0)
+                          )
                         ),
                       )
                     )
                   ),
-                  Flexible(
-                    child: MaterialButton(
-                      onPressed: () {
-
+                  Container(
+                    padding: EdgeInsets.only(right: 8.0),
+                    child: store.state.messagesState.sendingMessage ? Container(
+                      width: 48.0,
+                      child: Center(
+                        child: SizedBox(
+                          width: 24.0,
+                          height: 24.0,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ) : IconButton(
+                      color: Theme.of(context).primaryColor,
+                      icon: Icon(Icons.send),
+                      onPressed: store.state.messagesState.sendingMessage ? null : () {
+                        if (_sendTextController.text.length > 0) {
+                          store.dispatch(UpdateMessagesAction(thread.id, [
+                            PrivateMessageModel.fromJson({
+                              'id': null,
+                              'thread_id': thread.id,
+                              'sender_id': store.state.loggedUser.id,
+                              'subject': '',
+                              'message': _sendTextController.text,
+                              'date_sent': DateTime.now().toUtc().toString(),
+                              'self': true,
+                            })
+                          ], 'prepend'));
+                          store.dispatch(SendMessageAction(thread.id, _sendTextController.text).thunk(context));
+                          _sendTextController.text = '';
+                        } else {
+                          store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context, params: {
+                            'title': '',
+                            'content': 'Wiadomość nie może być pusta'
+                          })));
+                        }
                       },
                     ),
                   )

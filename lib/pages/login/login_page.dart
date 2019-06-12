@@ -1,12 +1,13 @@
 import 'package:christian_date_app/state/actions/actions.dart';
 import 'package:christian_date_app/state/actions/asyncActions.dart';
 import 'package:christian_date_app/state/appState.dart';
+import 'package:christian_date_app/state/store.dart';
+import 'package:christian_date_app/storage/secure_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'forgot_page.dart';
-import 'package:christian_date_app/components/dialogs.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,10 +19,24 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  final usernameController = TextEditingController(text: '');
-  final passwordController = TextEditingController(text: '');
+  final usernameController = TextEditingController(text: 'Chrzescijanska Randka');
+  final passwordController = TextEditingController(text: 'lTV*(TNECbs7K0D4NZX#!8ng');
 
   final _loginForm = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    checkIfLoggedIn();
+  }
+
+  void checkIfLoggedIn() async {
+    final token = await secureStorage.read(key: 'token');
+    print('Secure storage token: $token');
+    if (token != null) {
+      store.dispatch(ValidateTokenAction(token).thunk(context));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

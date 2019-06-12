@@ -39,7 +39,7 @@ class _NewsPostPageState extends State<NewsPostPage> {
                       padding: EdgeInsets.only(left: 10.0),
                       child: CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: store.state.loggedUser != null ? NetworkImage(store.state.loggedUser.avatar['48']) : null,
+                        backgroundImage: store.state.loggedUser.avatar48 != null ? NetworkImage(store.state.loggedUser.avatar48) : null,
                       ),
                     ),
                     Flexible(
@@ -51,7 +51,7 @@ class _NewsPostPageState extends State<NewsPostPage> {
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
-                                    Text(store.state.loggedUser != null ? store.state.loggedUser.name : '',
+                                    Text(store.state.loggedUser.name,
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold
@@ -61,7 +61,7 @@ class _NewsPostPageState extends State<NewsPostPage> {
                                 ),
                                 Row(
                                   children: <Widget>[
-                                    Text(store.state.loggedUser != null ? store.state.loggedUser.username : '',
+                                    Text(store.state.loggedUser.username,
                                       style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey

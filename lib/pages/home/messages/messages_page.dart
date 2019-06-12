@@ -31,9 +31,9 @@ class _MessagesPageState extends State<MessagesPage> {
   void initState() {
     super.initState();
 
-    if (store.state.messageThreads.isEmpty) {
-      store.dispatch(FetchMessageThreadsChunkAction(0, store.state.threadsPerLoad, 'replace').thunk(context));
-    }
+    print('initState MessagesPage');
+
+    store.dispatch(FetchMessageThreadsChunkAction(0, store.state.threadsPerLoad, 'replace').thunk(context));
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >
@@ -130,7 +130,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                     child: Text(_model.recipient.exists() ? _model.recipient.displayName : '',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold
+                                        fontWeight: _model.unreadCount > 0 ? FontWeight.bold : FontWeight.normal
                                       ),
                                     )
                                   ),
@@ -143,9 +143,13 @@ class _MessagesPageState extends State<MessagesPage> {
                                     child: Row(
                                       children: <Widget>[
                                         Flexible(
-                                            child: Text((_model.lastMessage.self ? 'Ty: ' : '') + _model.lastMessage.message,
-                                                overflow: TextOverflow.ellipsis
-                                            )
+                                          child: Text((_model.lastMessage.self ? 'Ty: ' : '') + _model.lastMessage.message,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: _model.unreadCount > 0 ? FontWeight.bold : FontWeight.normal
+                                            ),
+                                          )
                                         ),
                                       ],
                                     ),

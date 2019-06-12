@@ -1,4 +1,3 @@
-
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
 
 class SetLoadingMessagesAction {
@@ -15,4 +14,10 @@ class UpdateMessagesAction {
   final bool allLoaded;
 
   UpdateMessagesAction(this.threadId, this.messages, this.type, { this.allLoaded = false });
+}
+
+class SetSendingMessageAction {
+  final bool sending;
+
+  SetSendingMessageAction(this.sending);
 }

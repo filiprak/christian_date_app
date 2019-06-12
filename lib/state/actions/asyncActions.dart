@@ -9,6 +9,7 @@ import 'package:redux_thunk/redux_thunk.dart';
 import 'package:christian_date_app/components/dialogs.dart';
 
 import '../appState.dart';
+import '../../storage/secure_storage.dart';
 import 'actions.dart';
 
 class LoginWithPasswordAction {
@@ -26,15 +27,15 @@ class LoginWithPasswordAction {
         LoginModel loginModel;
 
         if (!response['error']) {
+          await secureStorage.write(key: 'token', value: response['token']);
+
           loginModel = LoginModel(
             response['token'],
             response['username'],
-            response['email'],
             true,
           );
         } else {
           loginModel = LoginModel(
-            null,
             null,
             null,
             false,
@@ -66,9 +67,64 @@ class LoginWithPasswordAction {
   }
 }
 
+class ValidateTokenAction {
+  final String token;
+
+  ValidateTokenAction(this.token);
+
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        store.dispatch(SetLoadingAction(true, 'login'));
+        store.dispatch(ShowModalDialogAction().thunk(Dialogs.loading(context)));
+        final response = await api.validateJwtToken(token);
+
+        if (!response['error']) {
+          api.token = token;
+          await secureStorage.write(key: 'token', value: token);
+
+          final userResponse = await api.getCurrentUserData();
+
+          if (!userResponse['error']) {
+            UserModel userModel = UserModel.fromJson(userResponse);
+            store.dispatch(UpdateCurrentUserModelAction(userModel));
+
+            store.dispatch(UpdateLoginModelAction(LoginModel(
+              token,
+              userModel.username,
+              true,
+            )));
+            store.dispatch(NavigateReplacePageAction(HomePage()));
+          } else {
+            store.dispatch(ResetStateAction());
+            store.dispatch(NavigateReplacePageAction(LoginPage()));
+          }
+
+        } else {
+          await secureStorage.delete(key: 'token');
+          store.dispatch(LogoutAction());
+        }
+
+        store.dispatch(NavigatePopAction());
+
+      } catch (_) {
+        store.dispatch(NavigatePopAction());
+        store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context,
+            params: {
+              'content':
+              'Ups... Coś poszło nie tak, sprawdź połączenie z internetem.'
+            })));
+      } finally {
+        store.dispatch(SetLoadingAction(false, 'login'));
+      }
+    };
+  }
+}
+
 class LogoutAction {
   ThunkAction<AppState> logout() {
-    return (Store<AppState> store) {
+    return (Store<AppState> store) async {
+      await secureStorage.delete(key: 'token');
       store.dispatch(ResetStateAction());
       store.dispatch(NavigateReplacePageAction(LoginPage()));
     };
@@ -146,6 +202,7 @@ class PublishNewPostAction {
         store.dispatch(NavigatePopAction());
 
         if (!response['error']) {
+          store.dispatch(NavigatePopAction());
           store.dispatch(FetchActivitiesChunkAction(1, store.state.activitiesPerLoad, 'replace').thunk(context));
         } else {
           store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context,

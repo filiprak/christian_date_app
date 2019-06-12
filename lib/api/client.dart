@@ -194,6 +194,59 @@ class ApiClient extends AbstractApiClient {
     }
   }
 
+  @override
+  Future<Map<String, dynamic>> validateJwtToken(String token) async {
+    final response = await http.post(
+      Uri.http(baseUrl, '/wp-json/jwt-auth/v1/token/validate'),
+      headers: {
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      this.token = token;
+      return <String, dynamic> {
+        'error': false,
+        'token': token,
+        'valid': true,
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> sendMessage(Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.http(baseUrl, '/wp-json/mobile/v1/messages'),
+      headers: {
+        'Authorization': 'Bearer $token'
+      },
+      body: data
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'thread_id': decoded['thread_id'],
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
 }
 
 final api = ApiClient();

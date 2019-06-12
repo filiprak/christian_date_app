@@ -13,7 +13,7 @@ class Menu extends StatelessWidget {
 
           var content = <Widget>[];
 
-          if (store.state.loggedUser != null) {
+          if (store.state.loggedUser.username != '') {
             content = <Widget>[
               new UserAccountsDrawerHeader(
                 decoration: BoxDecoration(
@@ -23,10 +23,9 @@ class Menu extends StatelessWidget {
                   )
                 ),
                 accountName: new Text(store.state.loggedUser.name),
-                accountEmail: new Text(store.state.loginModel.email),
+                accountEmail: new Text(store.state.loggedUser.username),
                 currentAccountPicture: new CircleAvatar(
-                  backgroundImage: new NetworkImage(store.state.loggedUser.avatar.containsKey('48') ?
-                  store.state.loggedUser.avatar['48'] : ''),
+                  backgroundImage: new NetworkImage(store.state.loggedUser.avatar48),
                 ),
               ),
               new ListTile(
