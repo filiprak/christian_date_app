@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import '../appState.dart';
 import '../actions/actions.dart';
 import 'messageReducer.dart';
@@ -22,10 +24,13 @@ AppState appReducer(AppState state, action) {
   } else if (action is UpdateMessageThreadsAction) {
     if (action.type == 'replace') {
       state.messageThreads = action.threads;
+      state.messageThreadParticipants = HashMap.fromIterable(action.users, key: (u) => u.id, value: (u) => u);
     } else if (action.type == 'append') {
       state.messageThreads.addAll(action.threads);
+      state.messageThreadParticipants.addAll(HashMap.fromIterable(action.users, key: (u) => u.id, value: (u) => u));
     } else if (action.type == 'prepend') {
       state.messageThreads.insertAll(0, action.threads);
+      state.messageThreadParticipants.addAll(HashMap.fromIterable(action.users, key: (u) => u.id, value: (u) => u));
     }
     state.allThreadsLoaded = action.allLoaded;
 

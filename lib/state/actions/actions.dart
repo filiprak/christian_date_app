@@ -33,9 +33,10 @@ class UpdateActivitiesAction {
 class UpdateMessageThreadsAction {
   final String type;
   final List<ThreadModel> threads;
+  final List<UserModel> users;
   final bool allLoaded;
 
-  UpdateMessageThreadsAction(this.type, this.threads, { this.allLoaded = false });
+  UpdateMessageThreadsAction(this.type, this.threads, this.users, { this.allLoaded = false });
 }
 
 class SetLoadingAction {

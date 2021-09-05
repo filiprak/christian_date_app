@@ -21,19 +21,14 @@ class FetchCurrentThreadMessagesChunkAction {
     return (Store<AppState> store) async {
       try {
         store.dispatch(SetLoadingMessagesAction(true, 'currentThread'));
-        final response = await api.getMessages({
-          'offset': offset.toString(),
-          'limit': limit.toString(),
-          'thread_id': threadId.toString(),
-        });
+        final response = await api.getMessages(threadId);
 
         if (!response['error']) {
-          bool allLoaded = response['count'] < response['limit'];
-          store.dispatch(UpdateMessagesAction(threadId, response['messages'], type, allLoaded: allLoaded));
+          store.dispatch(UpdateMessagesAction(threadId, response['messages'], type, allLoaded: true));
         }
 
-      } catch (error) {
-        print('Error in FetchCurrentThreadMessagesChunkAction: ');
+      } catch (error, stacktrace) {
+        print(stacktrace);
         print(error);
       } finally {
         store.dispatch(SetLoadingMessagesAction(false, 'currentThread'));

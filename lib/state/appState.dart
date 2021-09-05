@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'messagesState.dart';
 import 'models/activityModel.dart';
 import 'models/loginModel.dart';
@@ -16,6 +18,7 @@ class AppState {
 
   // messages
   List<ThreadModel> messageThreads;
+  HashMap<int, UserModel> messageThreadParticipants;
   bool loadingThreads = false;
   int threadsPerLoad = 15;
   bool allThreadsLoaded = false;
