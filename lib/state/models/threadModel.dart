@@ -9,7 +9,7 @@ class ThreadModel {
   bool senderOnly;
   bool isDeleted;
   PrivateMessageModel lastMessage;
-  RecipientModel recipient;
+  List<RecipientModel> recipients;
 
   ThreadModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -17,6 +17,6 @@ class ThreadModel {
         senderOnly = json['sender_only'],
         isDeleted = json['is_deleted'],
         lastMessage = PrivateMessageModel.fromJson(json['last_message']),
-        recipient = RecipientModel.fromJson(json['recipient']);
+        recipients = json['recipients'].map<RecipientModel>((recipient) => RecipientModel.fromJson(recipient)).toList();
 
 }

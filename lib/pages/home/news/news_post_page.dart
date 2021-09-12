@@ -39,7 +39,7 @@ class _NewsPostPageState extends State<NewsPostPage> {
                       padding: EdgeInsets.only(left: 10.0),
                       child: CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: store.state.loggedUser.avatar48 != null ? NetworkImage(store.state.loggedUser.avatar48) : null,
+                        backgroundImage: store.state.loggedUser.avatar != null ? NetworkImage(store.state.loggedUser.avatar) : null,
                       ),
                     ),
                     Flexible(

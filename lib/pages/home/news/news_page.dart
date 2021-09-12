@@ -64,7 +64,7 @@ class _NewsPageState extends State<NewsPage> {
                     padding: EdgeInsets.only(left: 10.0),
                     child: CircleAvatar(
                       radius: 20.0,
-                      backgroundImage: store.state.loggedUser != null ? NetworkImage(store.state.loggedUser.avatar48) : null,
+                      backgroundImage: store.state.loggedUser != null ? NetworkImage(store.state.loggedUser.avatar) : null,
                     ),
                   ),
                   Flexible(

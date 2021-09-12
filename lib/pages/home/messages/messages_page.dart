@@ -109,8 +109,8 @@ class _MessagesPageState extends State<MessagesPage> {
                               },
                               leading: CircleAvatar(
                                 radius: 25,
-                                backgroundImage: _model.recipient.avatar != null
-                                    ? NetworkImage(_model.recipient.avatar)
+                                backgroundImage: _model.recipients[0].avatar != null
+                                    ? NetworkImage(_model.recipients[0].avatar)
                                     : null,
                               ),
                               trailing: _model.unreadCount > 0 ? Badge(
@@ -127,7 +127,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               title: Row(
                                 children: <Widget>[
                                   Flexible(
-                                    child: Text(_model.recipient.exists() ? _model.recipient.displayName : '',
+                                    child: Text(_model.recipients[0].exists() ? _model.recipients[0].displayName : '',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontWeight: _model.unreadCount > 0 ? FontWeight.bold : FontWeight.normal
