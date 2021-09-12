@@ -86,7 +86,7 @@ class ValidateTokenAction {
           final userResponse = await api.getCurrentUserData();
 
           if (!userResponse['error']) {
-            UserModel userModel = UserModel.fromJson(userResponse);
+            UserModel userModel = UserModel.fromJson(userResponse['user']);
             store.dispatch(UpdateCurrentUserModelAction(userModel));
 
             store.dispatch(UpdateLoginModelAction(LoginModel(
@@ -146,7 +146,7 @@ class FetchCurrentUserDataAction {
         final response = await api.getCurrentUserData();
 
         if (!response['error']) {
-          UserModel userModel = UserModel.fromJson(response);
+          UserModel userModel = UserModel.fromJson(response['user']);
           store.dispatch(UpdateCurrentUserModelAction(userModel));
         }
 

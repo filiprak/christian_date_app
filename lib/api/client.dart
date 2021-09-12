@@ -8,14 +8,14 @@ import 'abstractClient.dart';
 import 'package:http/http.dart' as http;
 
 class ApiClient extends AbstractApiClient {
-  final String baseUrl = 'www.test-chrzescijanskarandka.tk';
+  final String baseUrl = 'www.chrzescijanskarandka.pl';
   String token = '';
 
   @override
   Future<Map<String, dynamic>> getJwtToken(Map<String, String> credentials) async {
 
     final response = await http.post(
-      Uri.http(baseUrl, '/wp-json/jwt-auth/v1/token'),
+      Uri.https(baseUrl, '/wp-json/jwt-auth/v1/token'),
       body: credentials,
     );
 
@@ -45,7 +45,7 @@ class ApiClient extends AbstractApiClient {
   Future<Map<String, dynamic>> getCurrentUserData() async {
 
     final response = await http.get(
-      Uri.http(baseUrl, '/wp-json/wp/v2/users/me'),
+      Uri.https(baseUrl, '/wp-json/buddypress/v1/members/me'),
       headers: {
         'Authorization': 'Bearer $token'
       }
@@ -58,11 +58,7 @@ class ApiClient extends AbstractApiClient {
 
       return <String, dynamic> {
         'error': false,
-        'name': decoded['name'],
-        'username': decoded['slug'],
-        'description': decoded['description'],
-        'link': decoded['link'],
-        'avatar': decoded['avatar_urls'],
+        'user': decoded
       };
     } else {
       return <String, dynamic> {
@@ -76,7 +72,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> getActivities(Map<String, String> query) async {
     final response = await http.get(
-        Uri.http(baseUrl, '/wp-json/mobile/v1/activities', query),
+        Uri.https(baseUrl, '/wp-json/mobile/v1/activities', query),
         headers: {
           'Authorization': 'Bearer $token'
         },
@@ -104,7 +100,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> createActivity(String content) async {
     final response = await http.post(
-      Uri.http(baseUrl, '/wp-json/mobile/v1/activities'),
+      Uri.https(baseUrl, '/wp-json/mobile/v1/activities'),
       body: {
         'content': content
       },
@@ -133,7 +129,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query) async {
     final response = await http.get(
-      Uri.http(baseUrl, '/wp-json/mobile/v1/threads', query),
+      Uri.https(baseUrl, '/wp-json/mobile/v1/threads', query),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -165,7 +161,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> getMessages(Map<String, String> query) async {
     final response = await http.get(
-      Uri.http(baseUrl, '/wp-json/mobile/v1/messages', query),
+      Uri.https(baseUrl, '/wp-json/mobile/v1/messages', query),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -197,7 +193,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> validateJwtToken(String token) async {
     final response = await http.post(
-      Uri.http(baseUrl, '/wp-json/jwt-auth/v1/token/validate'),
+      Uri.https(baseUrl, '/wp-json/jwt-auth/v1/token/validate'),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -223,7 +219,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> sendMessage(Map<String, dynamic> data) async {
     final response = await http.post(
-      Uri.http(baseUrl, '/wp-json/mobile/v1/messages'),
+      Uri.https(baseUrl, '/wp-json/mobile/v1/messages'),
       headers: {
         'Authorization': 'Bearer $token'
       },

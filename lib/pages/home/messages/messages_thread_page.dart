@@ -66,7 +66,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: true,
-            title: Text(thread.recipient.displayName.toString()),
+            title: Text(thread.recipients[0].displayName.toString()),
             leading: IconButton(icon:Icon(Icons.arrow_back),
               onPressed:() => store.dispatch(NavigatePopAction())
             ),
@@ -115,7 +115,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                         },
                         leading: _model.self ? SizedBox(width: 80.0) : CircleAvatar(
                           radius: 15,
-                          backgroundImage: thread.recipient.avatar != null ? NetworkImage(thread.recipient.avatar) : null,
+                          backgroundImage: thread.recipients[0].avatar != null ? NetworkImage(thread.recipients[0].avatar) : null,
                         ),
                         trailing: null,
                         subtitle: Column(

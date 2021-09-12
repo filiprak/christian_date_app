@@ -25,7 +25,7 @@ class Menu extends StatelessWidget {
                 accountName: new Text(store.state.loggedUser.name),
                 accountEmail: new Text(store.state.loggedUser.username),
                 currentAccountPicture: new CircleAvatar(
-                  backgroundImage: new NetworkImage(store.state.loggedUser.avatar48),
+                  backgroundImage: new NetworkImage(store.state.loggedUser.avatar),
                 ),
               ),
               new ListTile(
