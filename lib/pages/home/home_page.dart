@@ -1,5 +1,5 @@
 import 'package:christian_date_app/pages/home/profile_page.dart';
-import 'package:christian_date_app/pages/home/search_page.dart';
+import 'package:christian_date_app/pages/home/users/users_page.dart';
 import 'package:christian_date_app/state/actions/asyncActions.dart';
 import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _children = [
     NewsPage(),
     MessagesPage(),
-    SearchPage(),
+    UsersPage(),
     ProfilePage(),
   ];
 

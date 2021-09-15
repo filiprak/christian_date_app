@@ -21,6 +21,11 @@ class AppState {
   bool allThreadsLoaded = false;
   MessagesState messagesState;
 
+  // users
+  List<UserModel> users = [];
+  bool loadingUsers = false;
+  int usersPerLoad = 15;
+
   bool loading = false;
 
   AppState() {
@@ -28,12 +33,12 @@ class AppState {
     this.loggedUser = UserModel();
 
     // activities
-    this.activities = List<ActivityModel>();
+    this.activities = [];
     this.loadingActivities = false;
     this.activitiesPerLoad = 10;
 
     // messages
-    this.messageThreads = List<ThreadModel>();
+    this.messageThreads = [];
     this.loadingThreads = false;
     this.threadsPerLoad = 10;
     this.allThreadsLoaded = false;

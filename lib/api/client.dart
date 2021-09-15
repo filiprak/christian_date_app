@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:christian_date_app/state/models/activityModel.dart';
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
+import 'package:christian_date_app/state/models/userModel.dart';
 
 import 'abstractClient.dart';
 import 'package:http/http.dart' as http;
@@ -43,7 +44,6 @@ class ApiClient extends AbstractApiClient {
 
   @override
   Future<Map<String, dynamic>> getCurrentUserData() async {
-
     final response = await http.get(
       Uri.https(baseUrl, '/wp-json/buddypress/v1/members/me'),
       headers: {
@@ -66,7 +66,32 @@ class ApiClient extends AbstractApiClient {
         'response': response.body,
       };
     }
+  }
 
+  @override
+  Future<Map<String, dynamic>> getUsers(Map<String, String> query) async {
+    final response = await http.get(
+        Uri.https(baseUrl, '/wp-json/buddypress/v1/members', query),
+        headers: {
+          'Authorization': 'Bearer $token'
+        }
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'users': List<UserModel>.from(decoded.map((user) => UserModel.fromJson(user)))
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
   }
 
   @override
