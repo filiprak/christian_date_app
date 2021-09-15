@@ -158,6 +158,35 @@ class FetchCurrentUserDataAction {
   }
 }
 
+class FetchUsersChunkAction {
+  final int page;
+  final int perPage;
+  final String type;
+
+  FetchUsersChunkAction(this.page, this.perPage, this.type);
+
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        store.dispatch(SetLoadingAction(true, 'users'));
+        final response = await api.getUsers({
+          'per_page': perPage.toString(),
+          'page': page.toString(),
+        });
+
+        if (!response['error']) {
+          store.dispatch(UpdateUsersAction(type, response['users']));
+        }
+      } catch (error) {
+        print('Error in FetchUsersChunkAction: ');
+        print(error);
+      } finally {
+        store.dispatch(SetLoadingAction(false, 'users'));
+      }
+    };
+  }
+}
+
 class FetchActivitiesChunkAction {
   final int page;
   final int perPage;

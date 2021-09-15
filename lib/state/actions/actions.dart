@@ -16,6 +16,13 @@ class UpdateCurrentUserModelAction {
   UpdateCurrentUserModelAction(this.newModel);
 }
 
+class UpdateUsersAction {
+  final String type;
+  final List<UserModel> users;
+
+  UpdateUsersAction(this.type, this.users);
+}
+
 class UpdateActivitiesAction {
   final String type;
   final List<ActivityModel> activities;

@@ -5,6 +5,8 @@ abstract class AbstractApiClient {
 
   Future<Map<String, dynamic>> getCurrentUserData();
 
+  Future<Map<String, dynamic>> getUsers(Map<String, String> query);
+
   // activities
 
   Future<Map<String, dynamic>> getActivities(Map<String, String> query);

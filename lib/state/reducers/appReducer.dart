@@ -29,6 +29,15 @@ AppState appReducer(AppState state, action) {
     }
     state.allThreadsLoaded = action.allLoaded;
 
+  } else if (action is UpdateUsersAction) {
+    if (action.type == 'replace') {
+      state.users = action.users;
+    } else if (action.type == 'append') {
+      state.users.addAll(action.users);
+    } else if (action.type == 'prepend') {
+      state.users.insertAll(0, action.users);
+    }
+
   } else if (action is SetLoadingAction) {
     if (action.what == 'login') {
       state.loading = action.loading;
@@ -38,6 +47,8 @@ AppState appReducer(AppState state, action) {
       state.loadingActivities = action.loading;
     } else if (action.what == 'threads') {
       state.loadingThreads = action.loading;
+    } else if (action.what == 'users') {
+      state.loadingUsers = action.loading;
     } //...
 
   } else if (action is ResetStateAction) {
