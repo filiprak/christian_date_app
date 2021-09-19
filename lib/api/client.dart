@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:christian_date_app/state/models/activityModel.dart';
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
@@ -77,7 +78,7 @@ class ApiClient extends AbstractApiClient {
         }
     );
 
-    print(response.body);
+    log(response.body);
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
