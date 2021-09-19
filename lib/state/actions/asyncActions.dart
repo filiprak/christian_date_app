@@ -150,9 +150,10 @@ class FetchCurrentUserDataAction {
           store.dispatch(UpdateCurrentUserModelAction(userModel));
         }
 
-      } catch (error) {
+      } catch (error, stacktrace) {
         print('Error in FetchCurrentUserDataAction: ');
         print(error);
+        print(stacktrace);
       }
     };
   }
@@ -177,9 +178,10 @@ class FetchUsersChunkAction {
         if (!response['error']) {
           store.dispatch(UpdateUsersAction(type, response['users']));
         }
-      } catch (error) {
+      } catch (error, stacktrace) {
         print('Error in FetchUsersChunkAction: ');
         print(error);
+        print(stacktrace);
       } finally {
         store.dispatch(SetLoadingAction(false, 'users'));
       }

@@ -82,17 +82,22 @@ class _UsersPageState extends State<UsersPage> {
                           UserModel _model = store.state.users[index];
                           return Column(
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(5.0),
-                                child: CircleAvatar(
-                                  radius: 45,
-                                  backgroundImage: _model.avatar != null
-                                      ? NetworkImage(_model.avatar)
-                                      : null,
+                              InkWell(
+                                onTap: () {
+                                  store.dispatch(NavigatePushPageAction(UsersSinglePage(_model)));
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: CircleAvatar(
+                                    radius: 45,
+                                    backgroundImage: _model.avatar != null
+                                        ? NetworkImage(_model.avatar)
+                                        : null,
+                                  ),
                                 ),
                               ),
                               Text(
-                                _model.name,
+                                _model.name + ', ' + _model.xProfile.age.toString(),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
