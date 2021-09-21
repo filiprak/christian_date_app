@@ -8,21 +8,21 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:redux/redux.dart';
 
-class UsersSinglePage extends StatefulWidget {
-  static String tag = 'user-single-page';
+class UserProfilePage extends StatefulWidget {
+  static String tag = 'user-profile-page';
   final UserModel user;
 
-  UsersSinglePage(this.user);
+  UserProfilePage(this.user);
 
   @override
-  _UsersSinglePageState createState() => _UsersSinglePageState(this.user);
+  _UserProfilePageState createState() => _UserProfilePageState(this.user);
 }
 
-class _UsersSinglePageState extends State<UsersSinglePage> {
+class _UserProfilePageState extends State<UserProfilePage> {
 
   final UserModel user;
 
-  _UsersSinglePageState(this.user);
+  _UserProfilePageState(this.user);
 
   @override
   Widget build(BuildContext context) {

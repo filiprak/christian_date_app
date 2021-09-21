@@ -1,17 +1,14 @@
 import 'package:christian_date_app/state/actions/actions.dart';
 import 'package:christian_date_app/state/actions/asyncActions.dart';
 import 'package:christian_date_app/state/appState.dart';
-import 'package:christian_date_app/state/models/activityModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:redux/redux.dart';
 
-import 'users_single_page.dart';
+import 'user_profile_page.dart';
 
 class UsersPage extends StatefulWidget {
   static String tag = 'users-page';
@@ -84,7 +81,7 @@ class _UsersPageState extends State<UsersPage> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  store.dispatch(NavigatePushPageAction(UsersSinglePage(_model)));
+                                  store.dispatch(NavigatePushPageAction(UserProfilePage(_model)));
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(5.0),
