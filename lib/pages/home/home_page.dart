@@ -1,5 +1,5 @@
-import 'package:christian_date_app/pages/home/profile_page.dart';
 import 'package:christian_date_app/pages/home/users/users_page.dart';
+import 'package:christian_date_app/pages/home/users/user_profile_page.dart';
 import 'package:christian_date_app/state/actions/asyncActions.dart';
 import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'menu.dart';
 import 'package:christian_date_app/pages/home/messages/messages_page.dart';
 import 'package:christian_date_app/pages/home/news/news_page.dart';
+
+import 'my_profile_page.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -22,11 +24,11 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   Text _currentTitle;
 
-  final List<Widget> _children = [
+  List<Widget> _children = [
     NewsPage(),
     MessagesPage(),
     UsersPage(),
-    ProfilePage(),
+    MyProfilePage(),
   ];
 
   static final List<BottomNavigationBarItem> _bottomNavigation = [
