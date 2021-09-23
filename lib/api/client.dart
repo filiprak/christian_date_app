@@ -273,9 +273,10 @@ class ApiClient extends AbstractApiClient {
     final response = await http.post(
       Uri.https(baseUrl, '/wp-json/mobile/v1/messages'),
       headers: {
-        'Authorization': 'Bearer $token'
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
       },
-      body: data
+      body: json.encode(data)
     );
 
     print(response.body);
