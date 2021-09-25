@@ -10,7 +10,7 @@ import 'abstractClient.dart';
 import 'package:http/http.dart' as http;
 
 class ApiClient extends AbstractApiClient {
-  final String baseUrl = 'www.chrzescijanskarandka.pl';
+  final String baseUrl = 'chrzescijanskarandka.pl';
   String token = '';
 
   @override
@@ -41,6 +41,34 @@ class ApiClient extends AbstractApiClient {
         'response': response.body,
       };
     }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getUserData(Set<int> userIds) async {
+
+    final response = await http.get(
+        Uri.https(baseUrl, '/wp-json/buddypress/v1/members/', { 'user_ids': userIds.map((id) => id.toString()).join(",") }),
+        headers: {
+          'Authorization': 'Bearer $token'
+        }
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'users': List<UserModel>.from(decoded.map((user) => UserModel.fromJson(user)))
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+
   }
 
   @override
@@ -98,7 +126,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> getActivities(Map<String, String> query) async {
     final response = await http.get(
-        Uri.https(baseUrl, '/wp-json/mobile/v1/activities', query),
+        Uri.https(baseUrl, '/wp-json/buddypress/v1/activity', query),
         headers: {
           'Authorization': 'Bearer $token'
         },
@@ -109,11 +137,9 @@ class ApiClient extends AbstractApiClient {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      List<dynamic> activities = decoded['items'] as List;
-
       return <String, dynamic> {
         'error': false,
-        'activities': activities.map((activity) => ActivityModel.fromJson(activity)).toList(),
+        'activities': List<ActivityModel>.from(decoded.map((activity) => ActivityModel.fromJson(activity))),
       };
     } else {
       return <String, dynamic> {
@@ -126,7 +152,7 @@ class ApiClient extends AbstractApiClient {
   @override
   Future<Map<String, dynamic>> createActivity(String content) async {
     final response = await http.post(
-      Uri.https(baseUrl, '/wp-json/mobile/v1/activities'),
+      Uri.https(baseUrl, '/wp-json/buddypress/v1/activity'),
       body: {
         'content': content
       },
@@ -153,9 +179,9 @@ class ApiClient extends AbstractApiClient {
   }
 
   @override
-  Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query) async {
+  Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query, int loggedUserId) async {
     final response = await http.get(
-      Uri.https(baseUrl, '/wp-json/mobile/v1/threads', query),
+      Uri.https(baseUrl, '/wp-json/buddypress/v1/messages', query),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -166,15 +192,9 @@ class ApiClient extends AbstractApiClient {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      List<dynamic> threads = decoded['items'] as List;
-
       return <String, dynamic> {
         'error': false,
-        'count': decoded['count'],
-        'limit': decoded['limit'],
-        'offset': decoded['offset'],
-        'total': decoded['total'],
-        'threads': threads.map((thread) => ThreadModel.fromJson(thread)).toList(),
+        'threads': List<ThreadModel>.from(decoded.map((thread) => ThreadModel.fromJson(thread, loggedUserId))),
       };
     } else {
       return <String, dynamic> {
@@ -185,9 +205,9 @@ class ApiClient extends AbstractApiClient {
   }
 
   @override
-  Future<Map<String, dynamic>> getMessages(Map<String, String> query) async {
+  Future<Map<String, dynamic>> getMessages(int threadId) async {
     final response = await http.get(
-      Uri.https(baseUrl, '/wp-json/mobile/v1/messages', query),
+      Uri.https(baseUrl, '/wp-json/buddypress/v1/messages/' + threadId.toString(), {}),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -198,15 +218,9 @@ class ApiClient extends AbstractApiClient {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      List<dynamic> messages = decoded['items'] as List;
-
       return <String, dynamic> {
         'error': false,
-        'count': decoded['count'],
-        'limit': decoded['limit'],
-        'offset': decoded['offset'],
-        'total': decoded['total'],
-        'messages': messages.map((message) => PrivateMessageModel.fromJson(message)).toList(),
+        'messages': decoded[0]['messages'].map<PrivateMessageModel>((message) => PrivateMessageModel.fromJson(message)).toList(),
       };
     } else {
       return <String, dynamic> {

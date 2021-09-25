@@ -3,6 +3,8 @@ abstract class AbstractApiClient {
 
   Future<Map<String, dynamic>> validateJwtToken(String token);
 
+  Future<Map<String, dynamic>> getUserData(Set<int> userIds);
+
   Future<Map<String, dynamic>> getCurrentUserData();
 
   Future<Map<String, dynamic>> getUsers(Map<String, String> query);
@@ -15,9 +17,9 @@ abstract class AbstractApiClient {
 
   // messages
 
-  Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query);
+  Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query, int loggedUserId);
 
-  Future<Map<String, dynamic>> getMessages(Map<String, String> query);
+  Future<Map<String, dynamic>> getMessages(int threadId);
 
   Future<Map<String, dynamic>> sendMessage(Map<String, dynamic> params);
 

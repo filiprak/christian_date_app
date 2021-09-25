@@ -1,5 +1,7 @@
 
 import 'package:christian_date_app/state/models/profileModel.dart';
+import 'package:christian_date_app/state/models/utils.dart';
+
 
 class UserModel {
 
@@ -13,10 +15,6 @@ class UserModel {
     username = '';
     name = '';
     avatar = 'https://via.placeholder.com/48';
-  }
-
-  static String normalizeUrl(String url) {
-    return url.contains('https:') ? url : 'https:' + url;
   }
 
   UserModel.fromJson(Map<String, dynamic> json)

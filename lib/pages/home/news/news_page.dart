@@ -132,7 +132,7 @@ class _NewsPageState extends State<NewsPage> {
                               Flexible(
                                 child: Html(
                                   renderNewlines: true,
-                                  data: _model.action,
+                                  data: _model.title,
                                   defaultTextStyle: TextStyle(
                                       fontSize: 13, color: Colors.grey),
                                 ),
