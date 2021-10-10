@@ -7,7 +7,6 @@ import 'package:christian_date_app/state/appState.dart';
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
-import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -67,12 +66,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: true,
-            title: Text(
-              thread.participants
-                  .map((participant) => store.state.messageThreadParticipants.containsKey(participant) ? store.state.messageThreadParticipants[participant].name : 'Usunięty użytkownik')
-                  .toList()
-                  .join(", "),
-            ),
+            title: Text(thread.recipients[0].displayName.toString()),
             leading: IconButton(icon:Icon(Icons.arrow_back),
               onPressed:() => store.dispatch(NavigatePopAction())
             ),
@@ -87,10 +81,9 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                           store.state.messagesState.messagesCount(thread.id) + 1 :
                           store.state.messagesState.messagesCount(thread.id),
                   itemBuilder: (context, index) {
-                    final int messageCount = store.state.messagesState.messagesCount(thread.id);
 
                     if (store.state.messagesState.currentThreadLoading &&
-                        index >= messageCount) {
+                        index >= store.state.messagesState.messagesCount(thread.id)) {
                       return Center(
                         child: Padding(
                           padding: EdgeInsets.all(24.0),
@@ -99,8 +92,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                       );
                     }
 
-                    PrivateMessageModel _model = store.state.messagesState.getMessage(thread.id, messageCount - index - 1);
-                    UserModel sender = store.state.messageThreadParticipants[_model.senderId];
+                    PrivateMessageModel _model = store.state.messagesState.getMessage(thread.id, index);
 
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(
@@ -121,13 +113,9 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                             }
                           });
                         },
-                        leading: CircleAvatar(
+                        leading: _model.self ? SizedBox(width: 80.0) : CircleAvatar(
                           radius: 15,
-                          backgroundImage: sender != null && sender.avatar != null
-                              ? NetworkImage(store.state.messageThreadParticipants[_model.senderId].avatar)
-                              : _model.senderId == store.state.loggedUser.id
-                                ? NetworkImage(store.state.loggedUser.avatar)
-                                : null
+                          backgroundImage: thread.recipients[0].avatar != null ? NetworkImage(thread.recipients[0].avatar) : null,
                         ),
                         trailing: null,
                         subtitle: Column(
@@ -146,18 +134,18 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 4.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: _model.self ? MainAxisAlignment.end : MainAxisAlignment.start,
                                 children: <Widget>[
                                   Flexible(
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          color: Colors.grey[300],
+                                          color: _model.self ? Theme.of(context).primaryColorLight : Colors.grey[300],
                                           borderRadius: BorderRadius.circular(24.0)
                                       ),
                                       padding: EdgeInsets.all(16.0),
                                       child: Text(_model.message, style: TextStyle(
                                         fontSize: 16,
-                                        color: Theme.of(context).textTheme.body1.color
+                                        color: _model.self ? Colors.white : Theme.of(context).textTheme.body1.color
                                       )),
                                     ),
                                     fit: FlexFit.loose,
@@ -168,7 +156,7 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 8.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: _model.self ? MainAxisAlignment.end : MainAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
                                     timeago.format(_model.date),
@@ -229,12 +217,8 @@ class _MessagesThreadPageState extends State<MessagesThreadPage> {
                               'id': null,
                               'thread_id': thread.id,
                               'sender_id': store.state.loggedUser.id,
-                              'subject': {
-                                'raw': ''
-                              },
-                              'message': {
-                                'raw': _sendTextController.text
-                              },
+                              'subject': '',
+                              'message': _sendTextController.text,
                               'date_sent': DateTime.now().toUtc().toString(),
                               'self': true,
                             })
