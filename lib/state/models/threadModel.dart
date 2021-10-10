@@ -6,20 +6,17 @@ class ThreadModel {
 
   int id;
   int unreadCount;
-  String lastMessage;
-  String excerpt;
-  DateTime date;
-  Set<int> participants;
+  bool senderOnly;
+  bool isDeleted;
+  PrivateMessageModel lastMessage;
+  List<RecipientModel> recipients;
 
-  ThreadModel.fromJson(Map<String, dynamic> json, loggedUserId)
+  ThreadModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         unreadCount = json['unread_count'],
-        lastMessage = json['message']['rendered'],
-        excerpt = json['excerpt']['rendered'],
-        date = DateTime.tryParse(json['date']),
-        participants = {} {
-    json['sender_ids'].entries.forEach((senderId) => participants.add(senderId.value));
-    json['recipients'].entries.forEach((recipient) => participants.add(recipient.value['user_id']));
-    participants.remove(loggedUserId);
-  }
+        senderOnly = json['sender_only'],
+        isDeleted = json['is_deleted'],
+        lastMessage = PrivateMessageModel.fromJson(json['last_message']),
+        recipients = json['recipients'].map<RecipientModel>((recipient) => RecipientModel.fromJson(recipient)).toList();
+
 }

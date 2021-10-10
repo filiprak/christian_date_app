@@ -2,7 +2,6 @@ import 'package:christian_date_app/api/client.dart';
 import 'package:christian_date_app/pages/home/home_page.dart';
 import 'package:christian_date_app/pages/login/login_page.dart';
 import 'package:christian_date_app/state/models/loginModel.dart';
-import 'package:christian_date_app/state/models/recipientModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
@@ -269,24 +268,18 @@ class FetchMessageThreadsChunkAction {
       try {
         store.dispatch(SetLoadingAction(true, 'threads'));
         final response = await api.getMessageThreads({
-          'page': offset.toString(),
-          'per_page': limit.toString(),
-        }, store.state.loggedUser.id);
+          'offset': offset.toString(),
+          'limit': limit.toString(),
+        });
 
         if (!response['error']) {
-          Set<int> ids = {};
-          response['threads'].forEach((thread) => ids.addAll(thread.participants));
-
-          final userData = await api.getUserData(ids);
-          if (!userData['error']) {
-            store.dispatch(UpdateMessageThreadsAction(type, response['threads'], userData['users'], allLoaded: true));
-          }
+          bool allLoaded = response['count'] < response['limit'];
+          store.dispatch(UpdateMessageThreadsAction(type, response['threads'], allLoaded: allLoaded));
         }
 
-      } catch (error, stacktrace) {
+      } catch (error) {
         print('Error in FetchMessageThreadsChunkAction: ');
         print(error);
-        print(stacktrace);
       } finally {
         store.dispatch(SetLoadingAction(false, 'threads'));
       }

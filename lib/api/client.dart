@@ -179,9 +179,9 @@ class ApiClient extends AbstractApiClient {
   }
 
   @override
-  Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query, int loggedUserId) async {
+  Future<Map<String, dynamic>> getMessageThreads(Map<String, String> query) async {
     final response = await http.get(
-      Uri.https(baseUrl, '/wp-json/buddypress/v1/messages', query),
+      Uri.https(baseUrl, '/wp-json/mobile/v1/threads', query),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -192,9 +192,15 @@ class ApiClient extends AbstractApiClient {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
+      List<dynamic> threads = decoded['items'] as List;
+
       return <String, dynamic> {
         'error': false,
-        'threads': List<ThreadModel>.from(decoded.map((thread) => ThreadModel.fromJson(thread, loggedUserId))),
+        'count': decoded['count'],
+        'limit': decoded['limit'],
+        'offset': decoded['offset'],
+        'total': decoded['total'],
+        'threads': threads.map((thread) => ThreadModel.fromJson(thread)).toList(),
       };
     } else {
       return <String, dynamic> {
@@ -205,9 +211,9 @@ class ApiClient extends AbstractApiClient {
   }
 
   @override
-  Future<Map<String, dynamic>> getMessages(int threadId) async {
+  Future<Map<String, dynamic>> getMessages(Map<String, String> query) async {
     final response = await http.get(
-      Uri.https(baseUrl, '/wp-json/buddypress/v1/messages/' + threadId.toString(), {}),
+      Uri.https(baseUrl, '/wp-json/mobile/v1/messages', query),
       headers: {
         'Authorization': 'Bearer $token'
       },
@@ -218,9 +224,15 @@ class ApiClient extends AbstractApiClient {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
+      List<dynamic> messages = decoded['items'] as List;
+
       return <String, dynamic> {
         'error': false,
-        'messages': decoded[0]['messages'].map<PrivateMessageModel>((message) => PrivateMessageModel.fromJson(message)).toList(),
+        'count': decoded['count'],
+        'limit': decoded['limit'],
+        'offset': decoded['offset'],
+        'total': decoded['total'],
+        'messages': messages.map((message) => PrivateMessageModel.fromJson(message)).toList(),
       };
     } else {
       return <String, dynamic> {

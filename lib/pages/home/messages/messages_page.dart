@@ -1,12 +1,10 @@
 import 'package:christian_date_app/state/actions/actions.dart';
 import 'package:christian_date_app/state/appState.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
-import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:christian_date_app/state/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_date_app/state/actions/asyncActions.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:badges/badges.dart';
@@ -35,7 +33,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
     print('initState MessagesPage');
 
-    store.dispatch(FetchMessageThreadsChunkAction(1, store.state.threadsPerLoad, 'replace').thunk(context));
+    store.dispatch(FetchMessageThreadsChunkAction(0, store.state.threadsPerLoad, 'replace').thunk(context));
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >
@@ -87,7 +85,7 @@ class _MessagesPageState extends State<MessagesPage> {
                       key: _refreshIndicatorKey,
                       onRefresh: () {
                           store.dispatch(FetchMessageThreadsChunkAction(
-                              1, store.state.threadsPerLoad, 'replace')
+                              0, store.state.threadsPerLoad, 'replace')
                               .thunk(context));
                           return Future.delayed(const Duration(seconds: 1));
                       },
@@ -102,7 +100,6 @@ class _MessagesPageState extends State<MessagesPage> {
                         itemBuilder: (context, index) {
                           if (index < store.state.messageThreads.length) {
                             ThreadModel _model = store.state.messageThreads[index];
-                            UserModel participant = store.state.messageThreadParticipants[_model.participants.first];
 
                             return ListTile(
                               contentPadding: EdgeInsets.symmetric(
@@ -112,8 +109,8 @@ class _MessagesPageState extends State<MessagesPage> {
                               },
                               leading: CircleAvatar(
                                 radius: 25,
-                                backgroundImage: participant != null && participant.avatar != null
-                                    ? NetworkImage(store.state.messageThreadParticipants[_model.participants.first].avatar)
+                                backgroundImage: _model.recipients[0].avatar != null
+                                    ? NetworkImage(_model.recipients[0].avatar)
                                     : null,
                               ),
                               trailing: _model.unreadCount > 0 ? Badge(
@@ -130,11 +127,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               title: Row(
                                 children: <Widget>[
                                   Flexible(
-                                    child: Text(
-                                      _model.participants
-                                        .map((participant) => store.state.messageThreadParticipants.containsKey(participant) ? store.state.messageThreadParticipants[participant].name : 'Usunięty użytkownik')
-                                        .toList()
-                                        .join(", "),
+                                    child: Text(_model.recipients[0].exists() ? _model.recipients[0].displayName : '',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontWeight: _model.unreadCount > 0 ? FontWeight.bold : FontWeight.normal
@@ -150,8 +143,12 @@ class _MessagesPageState extends State<MessagesPage> {
                                     child: Row(
                                       children: <Widget>[
                                         Flexible(
-                                          child: Html(
-                                            data: _model.excerpt
+                                          child: Text((_model.lastMessage.self ? 'Ty: ' : '') + _model.lastMessage.message,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: _model.unreadCount > 0 ? FontWeight.bold : FontWeight.normal
+                                            ),
                                           )
                                         ),
                                       ],
@@ -162,7 +159,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                     child: Row(
                                       children: <Widget>[
                                         Text(
-                                          timeago.format(_model.date),
+                                          timeago.format(_model.lastMessage.date),
                                           style: TextStyle(
                                             fontSize: 12,
                                           ),
