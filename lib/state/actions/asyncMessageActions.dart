@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:christian_date_app/api/client.dart';
 import 'package:christian_date_app/components/dialogs.dart';
 import 'package:flutter/material.dart';
@@ -32,9 +34,9 @@ class FetchCurrentThreadMessagesChunkAction {
           store.dispatch(UpdateMessagesAction(threadId, response['messages'], type, allLoaded: allLoaded));
         }
 
-      } catch (error) {
-        print('Error in FetchCurrentThreadMessagesChunkAction: ');
+      } catch (error, stacktrace) {
         print(error);
+        print(stacktrace);
       } finally {
         store.dispatch(SetLoadingMessagesAction(false, 'currentThread'));
       }
@@ -54,10 +56,15 @@ class SendMessageAction {
     return (Store<AppState> store) async {
       try {
 
-        var args = <String, dynamic>{
-          'thread_id': this.threadId.toString(),
-          'content': this.content,
-        };
+        var args = <String, dynamic>{};
+
+        args['content'] = this.content;
+
+        if (this.threadId != null) {
+          args['thread_id'] = this.threadId.toString();
+        } else {
+          args['thread_id'] = "new";
+        }
 
         if (this.recipients != null) {
           args['recipients'] = this.recipients;
@@ -70,7 +77,7 @@ class SendMessageAction {
           store.dispatch(FetchCurrentThreadMessagesChunkAction(
             0,
             store.state.messagesState.messagesPerLoad,
-            threadId,
+            response['thread_id'],
             'replace',
           ).thunk(context));
 
@@ -81,9 +88,9 @@ class SendMessageAction {
               })));
         }
 
-      } catch (error) {
-        print('Error in FetchCurrentThreadMessagesChunkAction: ');
+      } catch (error, stacktrace) {
         print(error);
+        print(stacktrace);
         store.dispatch(ShowModalDialogAction().thunk(Dialogs.error(context,
             params: {
               'content': 'Nie udało się wysłać wiadomości, sprawdź połączenie z internetem.'
