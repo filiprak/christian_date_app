@@ -4,12 +4,12 @@ import 'package:christian_date_app/state/actions/asyncActions.dart';
 import 'package:christian_date_app/state/actions/asyncMessageActions.dart';
 import 'package:christian_date_app/state/actions/messageActions.dart';
 import 'package:christian_date_app/state/appState.dart';
-import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:redux/redux.dart';
 
@@ -30,6 +30,47 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   _UserProfilePageState(this.user);
 
+  Widget _buildChip(String text, IconData iconData, {double iconSize = 25.0}) {
+    return Chip(
+      labelPadding: EdgeInsets.fromLTRB(10, 2, 5, 2),
+      avatar: Padding(
+        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+        child: Icon(iconData, size: iconSize),
+      ),
+      label: Text(text),
+      backgroundColor: Colors.black12,
+      padding: EdgeInsets.all(5.0),
+    );
+  }
+
+  Widget _buildDescription(String label, String text) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+            child: Text(
+              label,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey[400],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+            child: Html(
+              data: text,
+              defaultTextStyle: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ]
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, Store<AppState>>(
@@ -48,59 +89,63 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 Flexible(
                   child: ListView(
                     children: <Widget>[
-                      Image.network(user.avatar),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                          child: Image.network(user.avatar)
+                      ),
                       if (user.xProfile.about != null && user.xProfile.about.isNotEmpty)
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
-                                child: Text(
-                                  'O mnie',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.grey[400],
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                                child: Html(
-                                  data: user.xProfile.about,
-                                  defaultTextStyle: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ]
-                        ),
+                        _buildDescription('O mnie', user.xProfile.about),
+                      if (user.xProfile.describeYourself != null && user.xProfile.describeYourself.isNotEmpty)
+                        _buildDescription('Opisz siebie', user.xProfile.describeYourself),
                       if (user.xProfile.city != null && user.xProfile.city.isNotEmpty)
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
-                                child: Text(
-                                  'Lokalizacja',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.grey[400],
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                                child: Html(
-                                  data: user.xProfile.city + (user.xProfile.district != null ? ', ' + user.xProfile.district : ''),
-                                  defaultTextStyle: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ]
+                        _buildDescription('Lokalizacja', user.xProfile.city + (user.xProfile.district != null ? ', ' + user.xProfile.district : '')),
+                      if (user.xProfile.willingToMove != null && user.xProfile.willingToMove.isNotEmpty)
+                        _buildDescription('Zmiana miejsca zamieszkania', user.xProfile.willingToMove),
+                      if (user.xProfile.hobby != null && user.xProfile.hobby.isNotEmpty)
+                        _buildDescription('Hobby', user.xProfile.hobby),
+                      if (user.xProfile.favouriteBibleVerses != null && user.xProfile.favouriteBibleVerses.isNotEmpty)
+                        _buildDescription('Ulubione wersety biblijne', user.xProfile.favouriteBibleVerses),
+                      if (user.xProfile.jesusIsforMe != null && user.xProfile.jesusIsforMe.isNotEmpty)
+                        _buildDescription('Jezus jest dla mnie...', user.xProfile.jesusIsforMe),
+                      if (user.xProfile.bestPoint != null && user.xProfile.bestPoint.isNotEmpty)
+                        _buildDescription('Najlepsza cecha', user.xProfile.bestPoint),
+
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                        child: Wrap(
+                          spacing: 5.0,
+                          children: [
+                            if (user.xProfile.maritalStatus != null && user.xProfile.maritalStatus.isNotEmpty)
+                              _buildChip(user.xProfile.maritalStatus, Icons.people),
+                            if (user.xProfile.religion != null && user.xProfile.religion.isNotEmpty)
+                              _buildChip(user.xProfile.religion, FontAwesomeIcons.pray, iconSize: 20),
+                            if (user.xProfile.religiousAffiliation != null && user.xProfile.religiousAffiliation.isNotEmpty)
+                              _buildChip(user.xProfile.religiousAffiliation, FontAwesomeIcons.church, iconSize: 20),
+                            if (user.xProfile.smoking != null && user.xProfile.smoking.isNotEmpty)
+                              _buildChip(user.xProfile.smoking, FontAwesomeIcons.smoking, iconSize: 20),
+                            if (user.xProfile.alcohol != null && user.xProfile.alcohol.isNotEmpty)
+                              _buildChip(user.xProfile.alcohol, FontAwesomeIcons.glassCheers, iconSize: 20),
+                            if (user.xProfile.education != null && user.xProfile.education.isNotEmpty)
+                              _buildChip(user.xProfile.education, FontAwesomeIcons.graduationCap, iconSize: 20),
+                            if (user.xProfile.workOrStudy != null && user.xProfile.workOrStudy.isNotEmpty)
+                              _buildChip(user.xProfile.workOrStudy, Icons.engineering),
+                            if (user.xProfile.hasChildren != null && user.xProfile.hasChildren.isNotEmpty)
+                              _buildChip("Czy mam: " + user.xProfile.hasChildren, FontAwesomeIcons.baby, iconSize: 20),
+                            if (user.xProfile.wantsChildren != null && user.xProfile.wantsChildren.isNotEmpty)
+                              _buildChip("Czy chcę: " + user.xProfile.wantsChildren, FontAwesomeIcons.baby, iconSize: 20),
+                            if (user.xProfile.height != null)
+                              _buildChip(user.xProfile.height.toString() + "cm", Icons.height),
+                            if (user.xProfile.weight != null)
+                              _buildChip(user.xProfile.weight.toString() + "kg", FontAwesomeIcons.balanceScaleLeft, iconSize: 20),
+                            if (user.xProfile.eyesColor != null && user.xProfile.eyesColor.isNotEmpty)
+                              _buildChip(user.xProfile.eyesColor.toString(), FontAwesomeIcons.eye, iconSize: 20),
+                            if (user.xProfile.hairColor != null && user.xProfile.hairColor.isNotEmpty)
+                              _buildChip(user.xProfile.hairColor.toString(), Icons.face_retouching_natural_rounded),
+                            if (user.xProfile.figure != null && user.xProfile.figure.isNotEmpty)
+                              _buildChip(user.xProfile.figure, Icons.accessibility),
+                          ],
                         )
+                      )
                     ],
                   ),
                 ),

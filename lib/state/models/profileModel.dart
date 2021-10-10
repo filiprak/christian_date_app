@@ -13,8 +13,9 @@ class ProfileModel {
 
   // description
   String favouriteBibleVerses;
+  String describeYourself;
 
-  //
+  // lifestyle
   String hobby;
   String smoking;
   String alcohol;
@@ -72,6 +73,7 @@ class ProfileModel {
         religion = getValue(json, 1, 569),
         district = getValue(json, 1, 762),
         favouriteBibleVerses = getValue(json, 2, 741),
+        describeYourself = getValue(json, 2, 212),
         hobby = getValue(json, 4, 215),
         smoking = getValue(json, 4, 253),
         alcohol = getValue(json, 4, 533),
