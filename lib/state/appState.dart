@@ -1,3 +1,5 @@
+import 'package:christian_date_app/state/models/xProfileFieldModel.dart';
+
 import 'messagesState.dart';
 import 'models/activityModel.dart';
 import 'models/loginModel.dart';
@@ -23,6 +25,7 @@ class AppState {
 
   // users
   List<UserModel> users = [];
+  List<XProfileFieldModel> xProfileFields = [];
   bool loadingUsers = false;
   int usersPerLoad = 15;
 

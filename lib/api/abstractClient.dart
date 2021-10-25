@@ -9,6 +9,10 @@ abstract class AbstractApiClient {
 
   Future<Map<String, dynamic>> getUsers(Map<String, String> query);
 
+  Future<Map<String, dynamic>> getXProfileFields();
+
+  Future<Map<String, dynamic>> updateXProfileField(int fieldId, int userId, List<dynamic> value);
+
   // activities
 
   Future<Map<String, dynamic>> getActivities(Map<String, String> query);

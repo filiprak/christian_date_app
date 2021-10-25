@@ -54,39 +54,50 @@ class ProfileModel {
     return age;
   }
 
-  static String getValue(Map<String, dynamic> json, int groupId, int fieldId) {
-    return json[groupId.toString()] != null
-        && json[groupId.toString()]['fields'] != null
-        && json[groupId.toString()]['fields'][fieldId.toString()] != null
-        ? json[groupId.toString()]['fields'][fieldId.toString()]['value']['raw']
-        : null;
+  ProfileModel.fromJson(Map<String, dynamic> json) {
+    Map<int, dynamic> fields = new Map();
+    json['groups'].forEach((group) {
+      if (group['fields'] is List) {
+        group['fields'].forEach((field) {
+          if (field['value']['raw'].isNotEmpty) {
+            fields[field['id']] = field['value']['raw'];
+          }
+        });
+      } else if (group['fields'] is Map) {
+        group['fields'].forEach((i, field) {
+          if (field['value']['raw'].isNotEmpty) {
+            fields[field['id']] = field['value']['raw'];
+          }
+        });
+      }
+    });
+
+    name = fields[1];
+    age = calculateAge(fields[2] != null ? DateTime.tryParse(fields[2]) : null);
+    sex = fields[3];
+    maritalStatus = fields[9];
+    city = fields[17];
+    about = fields[519];
+    religiousAffiliation = fields[553];
+    religion = fields[569];
+    district = fields[762];
+    favouriteBibleVerses = fields[741];
+    describeYourself = fields[212];
+    hobby = fields[215];
+    smoking = fields[253];
+    alcohol = fields[533];
+    jesusIsforMe = fields[761];
+    education = fields[764];
+    workOrStudy = fields[771];
+    hasChildren = fields[777];
+    wantsChildren = fields[785];
+    willingToMove = fields[788];
+    height = fields[257] != null ? int.tryParse(fields[257]) : null;
+    weight = fields[258] != null ? int.tryParse(fields[258]) : null;
+    hairColor = fields[259];
+    eyesColor = fields[266];
+    figure = fields[274];
+    bestPoint = fields[293];
   }
 
-  ProfileModel.fromJson(Map<String, dynamic> json)
-      : name = getValue(json, 1, 1),
-        age = calculateAge(getValue(json, 1, 2) != null ? DateTime.tryParse(getValue(json, 1, 2)) : null),
-        sex = getValue(json, 1, 3),
-        maritalStatus = getValue(json, 1, 9),
-        city = getValue(json, 1, 17),
-        about = getValue(json, 1, 519),
-        religiousAffiliation = getValue(json, 1, 553),
-        religion = getValue(json, 1, 569),
-        district = getValue(json, 1, 762),
-        favouriteBibleVerses = getValue(json, 2, 741),
-        describeYourself = getValue(json, 2, 212),
-        hobby = getValue(json, 4, 215),
-        smoking = getValue(json, 4, 253),
-        alcohol = getValue(json, 4, 533),
-        jesusIsforMe = getValue(json, 4, 761),
-        education = getValue(json, 4, 764),
-        workOrStudy = getValue(json, 4, 771),
-        hasChildren = getValue(json, 4, 777),
-        wantsChildren = getValue(json, 4, 785),
-        willingToMove = getValue(json, 4, 788),
-        height = getValue(json, 5, 257) != null ? int.tryParse(getValue(json, 5, 257)) : null,
-        weight = getValue(json, 5, 258) != null ? int.tryParse(getValue(json, 5, 258)) : null,
-        hairColor = getValue(json, 5, 259),
-        eyesColor = getValue(json, 5, 266),
-        figure = getValue(json, 5, 274),
-        bestPoint = getValue(json, 5, 293);
 }

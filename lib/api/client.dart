@@ -5,6 +5,7 @@ import 'package:christian_date_app/state/models/activityModel.dart';
 import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
+import 'package:christian_date_app/state/models/xProfileFieldModel.dart';
 
 import 'abstractClient.dart';
 import 'package:http/http.dart' as http;
@@ -106,7 +107,7 @@ class ApiClient extends AbstractApiClient {
         }
     );
 
-    log(response.body);
+    print(response.body);
 
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
@@ -114,6 +115,66 @@ class ApiClient extends AbstractApiClient {
       return <String, dynamic> {
         'error': false,
         'users': List<UserModel>.from(decoded.map((user) => UserModel.fromJson(user)))
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getXProfileFields() async {
+    final response = await http.get(
+        Uri.https(baseUrl, '/wp-json/buddypress/v1/xprofile/fields', {
+          'fetch_visibility_level': 'true',
+          'fetch_field_data': 'true'
+        }),
+        headers: {
+          'Authorization': 'Bearer $token'
+        }
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'fields': List<XProfileFieldModel>.from(decoded.map((xProfileField) => XProfileFieldModel.fromJson(xProfileField)))
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateXProfileField(int fieldId, int userId, List<dynamic> value) async {
+    final response = await http.post(
+        Uri.https(baseUrl, '/wp-json/buddypress/v1/xprofile/' + fieldId.toString() + '/data/' + userId.toString(),
+        {
+          'context': 'edit',
+          'value': value
+        }),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'data': decoded,
       };
     } else {
       return <String, dynamic> {

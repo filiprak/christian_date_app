@@ -31,6 +31,7 @@ dependencies:
   badges: ^1.0.3
   flutter_secure_storage: 3.2.1+1
   font_awesome_flutter: ^8.8.1
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:
