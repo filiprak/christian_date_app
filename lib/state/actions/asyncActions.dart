@@ -3,6 +3,7 @@ import 'package:christian_date_app/pages/home/home_page.dart';
 import 'package:christian_date_app/pages/login/login_page.dart';
 import 'package:christian_date_app/state/models/loginModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
+import 'package:christian_date_app/state/models/xProfileFieldModel.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -152,6 +153,42 @@ class FetchCurrentUserDataAction {
 
       } catch (error, stacktrace) {
         print('Error in FetchCurrentUserDataAction: ');
+        print(error);
+        print(stacktrace);
+      }
+    };
+  }
+}
+
+class FetchXProfileFieldsAction {
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        final response = await api.getXProfileFields();
+
+        if (!response['error']) {
+          store.dispatch(UpdateXProfileSchemaAction(response['fields']));
+        }
+
+      } catch (error, stacktrace) {
+        print(error);
+        print(stacktrace);
+      }
+    };
+  }
+}
+
+class UpdateXProfileFieldAction {
+  final int fieldId;
+  final List<dynamic> value;
+
+  UpdateXProfileFieldAction(this.fieldId, this.value);
+
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        await api.updateXProfileField(fieldId, store.state.loggedUser.id, value);
+      } catch (error, stacktrace) {
         print(error);
         print(stacktrace);
       }

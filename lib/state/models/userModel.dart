@@ -22,5 +22,5 @@ class UserModel {
         username = json['user_login'],
         name = json['name'],
         avatar = normalizeUrl(json['avatar_urls']['full']),
-        xProfile = ProfileModel.fromJson(json['xprofile']['groups']);
+        xProfile = ProfileModel.fromJson(json['xprofile']);
 }
