@@ -167,7 +167,25 @@ class FetchXProfileFieldsAction {
         final response = await api.getXProfileFields();
 
         if (!response['error']) {
-          store.dispatch(UpdateXProfileSchemaAction(response['fields']));
+          store.dispatch(UpdateXProfileFieldsAction(response['fields']));
+        }
+
+      } catch (error, stacktrace) {
+        print(error);
+        print(stacktrace);
+      }
+    };
+  }
+}
+
+class FetchXProfileGroupsAction {
+  ThunkAction<AppState> thunk(BuildContext context) {
+    return (Store<AppState> store) async {
+      try {
+        final response = await api.getXProfileGroups();
+
+        if (!response['error']) {
+          store.dispatch(UpdateXProfileGroupsAction(response['groups']));
         }
 
       } catch (error, stacktrace) {

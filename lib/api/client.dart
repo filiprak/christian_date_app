@@ -6,6 +6,7 @@ import 'package:christian_date_app/state/models/privateMessageModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:christian_date_app/state/models/xProfileFieldModel.dart';
+import 'package:christian_date_app/state/models/xProfileGroupModel.dart';
 
 import 'abstractClient.dart';
 import 'package:http/http.dart' as http;
@@ -144,6 +145,36 @@ class ApiClient extends AbstractApiClient {
       return <String, dynamic> {
         'error': false,
         'fields': List<XProfileFieldModel>.from(decoded.map((xProfileField) => XProfileFieldModel.fromJson(xProfileField)))
+      };
+    } else {
+      return <String, dynamic> {
+        'error': true,
+        'response': response.body,
+      };
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getXProfileGroups() async {
+    final response = await http.get(
+        Uri.https(baseUrl, '/wp-json/buddypress/v1/xprofile/groups', {
+          'fetch_fields': 'true',
+          'fetch_field_data': 'true',
+          'fetch_visibility_level': 'true',
+        }),
+        headers: {
+          'Authorization': 'Bearer $token'
+        }
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+
+      return <String, dynamic> {
+        'error': false,
+        'groups': List<XProfileGroupModel>.from(decoded.map((xProfileGroup) => XProfileGroupModel.fromJson(xProfileGroup)))
       };
     } else {
       return <String, dynamic> {
