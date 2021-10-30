@@ -3,6 +3,7 @@ import 'package:christian_date_app/state/models/loginModel.dart';
 import 'package:christian_date_app/state/models/threadModel.dart';
 import 'package:christian_date_app/state/models/userModel.dart';
 import 'package:christian_date_app/state/models/xProfileFieldModel.dart';
+import 'package:christian_date_app/state/models/xProfileGroupModel.dart';
 
 
 class UpdateLoginModelAction {
@@ -17,10 +18,16 @@ class UpdateCurrentUserModelAction {
   UpdateCurrentUserModelAction(this.newModel);
 }
 
-class UpdateXProfileSchemaAction {
+class UpdateXProfileFieldsAction {
   final List<XProfileFieldModel> newModel;
 
-  UpdateXProfileSchemaAction(this.newModel);
+  UpdateXProfileFieldsAction(this.newModel);
+}
+
+class UpdateXProfileGroupsAction {
+  final List<XProfileGroupModel> newModel;
+
+  UpdateXProfileGroupsAction(this.newModel);
 }
 
 class UpdateUsersAction {

@@ -10,8 +10,11 @@ AppState appReducer(AppState state, action) {
   } else if (action is UpdateCurrentUserModelAction) {
     state.loggedUser = action.newModel;
 
-  } else if (action is UpdateXProfileSchemaAction) {
+  } else if (action is UpdateXProfileFieldsAction) {
     state.xProfileFields = action.newModel;
+
+  } else if (action is UpdateXProfileGroupsAction) {
+    state.xProfileGroups = action.newModel;
 
   } else if (action is UpdateActivitiesAction) {
     if (action.type == 'replace') {

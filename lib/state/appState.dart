@@ -5,6 +5,7 @@ import 'models/activityModel.dart';
 import 'models/loginModel.dart';
 import 'models/threadModel.dart';
 import 'models/userModel.dart';
+import 'models/xProfileGroupModel.dart';
 
 class AppState {
 
@@ -26,6 +27,7 @@ class AppState {
   // users
   List<UserModel> users = [];
   List<XProfileFieldModel> xProfileFields = [];
+  List<XProfileGroupModel> xProfileGroups = [];
   bool loadingUsers = false;
   int usersPerLoad = 15;
 
